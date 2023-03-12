@@ -34,6 +34,7 @@ Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »"
 - quand on ne click pas sur les images de personnage, l'overlay peut disparaitre
 
 ## A ajouter:
+- un mode cbt qui permet de pouvoir réorganiser l'ordre des perso sur l'overlay et le mode normal pour clicker sur l'overlay pour faire apparaitre la page
 
 
 ## Bugs résolus
