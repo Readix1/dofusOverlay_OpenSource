@@ -10,6 +10,8 @@ Cet overlay permet de mieux gérer son changement de page lors d'une session de 
 - ne plus avoir le focus sur une page dofus fait disparaitre l'overlay
 - clicker sur une image de l'overlay permet de changer de page dofus (bug)
 - drag l'overlay permet de le déplacer
+- click sur les boutons du coté de la souris pour click sur la page dofus + changer de page dofus (anciennement mode épée/mode "doigt")
+- ctrl+click sur un personnage de l'overlay pour le sélectionner/désélectionner 
 
 ![](demo/demo.gif)
 
