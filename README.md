@@ -11,7 +11,9 @@ Cet overlay permet de mieux gérer son changement de page lors d'une session de 
 - clicker sur une image de l'overlay permet de changer de page dofus (bug)
 - drag l'overlay permet de le déplacer
 - click sur les boutons du coté de la souris pour click sur la page dofus + changer de page dofus (anciennement mode épée/mode "doigt")
-- ctrl+click sur un personnage de l'overlay pour le sélectionner/désélectionner 
+- ctrl+click sur un personnage de l'overlay pour le sélectionner/désélectionner (Les personnages désélectionnés ne sont plus éligibles à l'affichage via tab)
+
+- Toutes les fonctionnalités doivent respecter les CGU. Actuellement la seule fonctionnalité (macro click + tab sur la souris) est autorisée. [Lien forum dofus](https://www.dofus.com/fr/forum/1069-dofus/2404061-macros-autorise?page=2#entry13291455) 
 
 ![](demo/demo.gif)
 
@@ -29,7 +31,6 @@ Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »"
 - quelques autres modification comme la position de l'overlay et son opacité
 
 ![](demo/overlay.png)
-
 
 ## Bugs
 - quand on utilise le click sur l'overlay pour changer de page, il arrive que ça crash
