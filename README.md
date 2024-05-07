@@ -41,15 +41,13 @@ Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »"
 ![](demo/overlay.png)
 
 ## Bugs
-- quand on utilise le click sur l'overlay pour changer de page, il arrive que ça crash
+- Crash de l'application qui survient lors d'un click sur un personnage pour changer de fenêtre
 
 ## A ajouter:
-- un mode cbt qui permet de pouvoir réorganiser l'ordre des perso sur l'overlay et le mode normal pour clicker sur l'overlay pour faire apparaitre la page
-
+- Permettre la réorganisation des personnages sans avoir à relancer l'application
 
 ## Bugs résolus
-- quand on ne click pas sur les images de personnage, l'overlay peut disparaitre
-
-
+- Disparition de l'overlay lors d'un click entre deux personnages
 
 ## Feature ajoutée 
+- Macro click + tab
