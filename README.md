@@ -29,7 +29,7 @@ Je vous invite toute fois à rester vigilent et à ne pas oublier que les logici
 Dans le fichier ressources/config.json, il est possible de faire quelques modifications pour personnaliser l'overlay
 - il est possible de changer l'image associée à chaque personnage.
 Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »":{"classe":«classe», "sexe":«sexe»}
-Toutes images de personnage de [Dofus](https://www.dofus.com/fr/prehome) sont la propriété d'[Ankama](https://www.ankama.com/fr)
+
 
 ![](demo/imagePerso.png)
 
@@ -52,3 +52,7 @@ Toutes images de personnage de [Dofus](https://www.dofus.com/fr/prehome) sont la
 
 ## Feature ajoutée 
 - Macro click + tab
+
+
+
+Toutes images de personnage de [Dofus](https://www.dofus.com/fr/prehome) sont la propriété d'[Ankama](https://www.ankama.com/fr)
