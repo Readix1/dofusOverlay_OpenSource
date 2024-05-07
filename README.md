@@ -14,11 +14,11 @@ Je vous invite toute fois à rester vigilent et à ne pas oublier que les logici
 
 
 
-- appuyer sur tab (+shift) permet de changer de page dofus ouverte
+- appuyer sur tab (+shift) permet de passer à la page dofus suivante (précédente)
 - ne plus avoir le focus sur une page dofus fait disparaitre l'overlay
 - clicker sur une image de l'overlay permet de changer de page dofus (bug)
 - drag l'overlay permet de le déplacer
-- click sur les boutons du coté de la souris pour click sur la page dofus + changer de page dofus (anciennement mode épée/mode "doigt")
+- Macro click + page suivante (equivalent à click+tab) (anciennement mode épée/mode "doigt")
 - ctrl+click sur un personnage de l'overlay pour le sélectionner/désélectionner (Les personnages désélectionnés ne sont plus éligibles à l'affichage via tab)
 
 
@@ -29,6 +29,7 @@ Je vous invite toute fois à rester vigilent et à ne pas oublier que les logici
 Dans le fichier ressources/config.json, il est possible de faire quelques modifications pour personnaliser l'overlay
 - il est possible de changer l'image associée à chaque personnage.
 Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »":{"classe":«classe», "sexe":«sexe»}
+Toutes images de personnage de [Dofus](https://www.dofus.com/fr/prehome) sont la propriété d'[Ankama](https://www.ankama.com/fr)
 
 ![](demo/imagePerso.png)
 
