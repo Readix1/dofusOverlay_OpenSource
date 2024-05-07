@@ -5,6 +5,9 @@
 
 Cet overlay permet de mieux gérer son changement de page lors d'une session de jeu dofus en multi-compte.
 
+Le code sera disponible prochaine avec un .exe pour ceux qui n'ont pas l'habitude d'utiliser python.
+Je vous invite toute fois à rester vigilent et à ne pas oublier que les logiciels tiers peuvent représenter un menace pour votre ordinateur ou vos comptes Ankama. Vous pourrez donc regarder le code pour vérifier qu'aucune instruction malveillante s'y trouve. Je vous invite également à ne pas télécharger Dofus Overlay sur un autre site qui pourrait redistribuer l'application après l'avoir modifier.
+
 ## Fonctionnalités: 
 #### Toutes les fonctionnalités doivent respecter les CGU. Actuellement la seule fonctionnalité (macro click + tab sur la souris) est autorisée. [Lien forum dofus](https://www.dofus.com/fr/forum/1069-dofus/2404061-macros-autorise?page=2#entry13291455)
 
