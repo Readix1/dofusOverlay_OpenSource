@@ -1,0 +1,7 @@
+Pillow==10.0.0
+Pillow==10.4.0
+psutil==5.9.0
+PyDirectInput==1.0.4
+pynput==1.7.6
+pywin32==303
+six==1.16.0
