@@ -1,0 +1,50 @@
+{
+    "img" : {
+        "path": "ressources\\img\\",
+        "Indimo" : {"classe":"iop",
+                    "sexe":"male"},
+        "Readox" : {"classe":"feca",
+                    "sexe":"femelle"},
+        "Reedix" : {"classe":"eliotrope",
+                    "sexe":"femelle"},
+        "Holexand" : {"classe":"pandawa",
+                    "sexe":"male"},
+        "Readiix" : {"classe":"sacrieur",
+                    "sexe":"male"},
+        "Boufmou" : {"classe":"boufmou",
+                    "sexe":""},
+        "Abour" : {"classe":"abour",
+                    "sexe":""},
+        "Tc-arc" : {"classe":"cra",
+                    "sexe":"femelle"},
+        "Tc-panda" : {"classe":"pandawa",
+                    "sexe":"male"},
+        "Tc-hupper" : {"classe":"huppermage",
+                    "sexe":"male"},
+        "Tc-enutrosor" : {"classe":"enutrof",
+                    "sexe":"male"},
+        "Tc-fecaa" : {"classe":"feca",
+                    "sexe":"femelle"},
+        "Beras" : {"classe":"beras",
+                "sexe":""},
+        "" : {"classe":"autre",
+                    "sexe":"0"},
+        "Autre" : {"classe":"autre",
+                    "sexe":"0"}
+    },
+    "keyboard_bindings" :
+    {
+        "stop" : "f12",
+        "next_win": "tab",
+        "prev_win": "shift",
+        "next_turn":"f1",
+        "focus_dofus" : ""
+    },
+    "overlay" :
+    {
+        "posx" : 0,
+        "posy" : 0,
+        "actif":1,
+        "opacity":0.8
+    }
+}
