@@ -18,15 +18,10 @@ Je vous invite toute fois à rester vigilent et à ne pas oublier que les logici
 - ne plus avoir le focus sur une page dofus fait disparaitre l'overlay
 - clicker sur une image de l'overlay permet de changer de page dofus (bug)
 - drag l'overlay permet de le déplacer
-<<<<<<< HEAD
-- click sur les boutons du coté de la souris pour click sur la page dofus + changer de page dofus (anciennement mode épée/mode "doigt")
-- ctrl+click sur un personnage de l'overlay pour le sélectionner/désélectionner
-=======
 - Macro click + page suivante (equivalent à click+tab) (anciennement mode épée/mode "doigt")
 - ctrl+click sur un personnage de l'overlay pour le sélectionner/désélectionner (Les personnages désélectionnés ne sont plus éligibles à l'affichage via tab)
+- Appuyer sur f3 pour reorganiser les pages
 
-
->>>>>>> 3d53c90741e3bfc252beea3652d642b3f5f7c216
 
 ![](demo/demo.gif)
 
@@ -47,23 +42,13 @@ Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »"
 ![](demo/overlay.png)
 
 ## Bugs
-<<<<<<< HEAD
-- quand on utilise le click sur l'overlay pour changer de page, il arrive que ça crash
-=======
 - Crash de l'application qui survient lors d'un click sur un personnage pour changer de fenêtre
->>>>>>> 3d53c90741e3bfc252beea3652d642b3f5f7c216
 
 ## A ajouter:
 - Permettre la réorganisation des personnages sans avoir à relancer l'application
 
 ## Bugs résolus
-<<<<<<< HEAD
-- quand on ne click pas sur les images de personnage, l'overlay peut disparaitre
-
-
-=======
 - Disparition de l'overlay lors d'un click entre deux personnages
->>>>>>> 3d53c90741e3bfc252beea3652d642b3f5f7c216
 
 ## Feature ajoutée 
 - Macro click + tab
