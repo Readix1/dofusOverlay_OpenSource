@@ -35,7 +35,7 @@ dm = DofusManager(config,dh)
 dm.add_observer("stop",dh.stop)
 
 if config["overlay"]["actif"]:
-    interface = DofusOverlay(config, dh.get_hwnds_order(), dh.get_names_order())
+    interface = DofusOverlay(config, dh.get_hwnds_order(), dh.get_names_order(), dh=dh)
     Listener(dm,interface).start()
     # ThreadListener(interface)
 

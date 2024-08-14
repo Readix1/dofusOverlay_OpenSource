@@ -10,7 +10,7 @@ import pythoncom
 
 
 class DofusOverlay(Overlay):
-    def __init__(self,config, order, order_name):
+    def __init__(self,config, order, order_name, dh=None):
         Overlay.__init__(self, config["overlay"]['posx'],config["overlay"]["posy"], alpha=config["overlay"]['opacity'])
         self.bind("<<Destroy>>", lambda e: self.destroy())
         self.imagePath = {k:config['img']['path']+v['classe']+'_'+v['sexe']+".png" for k,v in config['img'].items() if k != 'path'}
@@ -29,6 +29,8 @@ class DofusOverlay(Overlay):
         self.update_order(order,order_name)
         
         self.is_visible = True
+        
+        self.dh = dh
         
         
     def stop(self):

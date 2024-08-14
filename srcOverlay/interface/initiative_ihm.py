@@ -107,6 +107,9 @@ class Initiative_ihm(Toplevel):
             self.overlay.update_order(hwnd_ordered, name_ordered)
             self.overlay.reorganise = None
             
+            if self.overlay.dh:
+                self.overlay.dh.reorder(hwnd_ordered)
+            
         self.destroy()
 
 if __name__ == "__main__":

@@ -34,7 +34,10 @@ class DofusHandler(Thread,Observer):
         self.name_order = []
         self.cover=[]
     
-        
+    def reorder(self, order):
+        self.dofus = [self.dofus[self.get_index_by_hwnd(hwnd)] for hwnd in order]
+        # self.notify("update_hwnd",self.get_hwnds_order(),self.get_names_order())
+            
         
     def get_hwnds(self):
         return [d.hwnd for d in self.dofus]
