@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 
 ressources/img/
+
+.env/
+output/
+exe/

@@ -6,7 +6,7 @@ import logging
 import pythoncom
 import pywintypes
 import win32com.client
-
+import time
 
 from srcOverlay.initiative import Initiative 
 
@@ -57,6 +57,7 @@ class Page_Dofus():
             
     def press(self, lParam):
         win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
+        time.sleep(0.1)
         win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP, None, lParam)
         
     def __str__(self):
