@@ -9,6 +9,12 @@
                 "sexe":"femelle"},
         "Roublar" : {"classe":"roublard",
             "sexe":"male"},
+        "Tc-fecaa" : {"classe":"feca",
+            "sexe":"femelle"},
+        "Tc-arc" : {"classe":"cra",
+            "sexe":"femelle"},
+        "Tc-panda" : {"classe":"pandawa",
+            "sexe":"femelle"},
         "Beras" : {"classe":"beras",
                 "sexe":""},
         "" : {"classe":"autre",
@@ -22,7 +28,8 @@
         "next_win": "tab",
         "prev_win": "shift",
         "next_turn":"f1",
-        "focus_dofus" : ""
+        "focus_dofus" : "",
+        "change_initiative" : "f3"
     },
     "overlay" :
     {

@@ -1,4 +1,5 @@
 from srcOverlay.interface.overlay import Overlay
+from srcOverlay.interface.initiative_ihm import Initiative_ihm
 
 from threading import RLock
 import tkinter as tk
@@ -9,7 +10,7 @@ import pythoncom
 
 
 class DofusOverlay(Overlay):
-    def __init__(self,config,order,order_name):
+    def __init__(self,config, order, order_name):
         Overlay.__init__(self, config["overlay"]['posx'],config["overlay"]["posy"], alpha=config["overlay"]['opacity'])
         self.bind("<<Destroy>>", lambda e: self.destroy())
         self.imagePath = {k:config['img']['path']+v['classe']+'_'+v['sexe']+".png" for k,v in config['img'].items() if k != 'path'}
@@ -17,6 +18,8 @@ class DofusOverlay(Overlay):
         self.unselected_perso=[]
         self.order = []
         self.lock = RLock()
+        
+        self.reorganise = None
         
         self.frame_perso = tk.Frame(self, background="white")
         self.frame_perso.pack(side="left",padx=0, pady=0)
@@ -67,7 +70,7 @@ class DofusOverlay(Overlay):
             self.is_visible = False
         self.lock.release()
 
-    def update_order(self,order,order_name):
+    def update_order(self, order, order_name):
         self.lock.acquire()
         if(self.order == order_name):
             self.lock.release()
@@ -85,7 +88,7 @@ class DofusOverlay(Overlay):
         self.frame_perso.config(width=1)
         
         #building new
-        for hwnd,n in zip(order,order_name):
+        for hwnd,n in zip(order, order_name):
             if(n not in self.imagePath):
                 n = ""
             path = self.imagePath[n]
@@ -100,6 +103,12 @@ class DofusOverlay(Overlay):
         self.update_perso(self.curr_hwnd)
         self.update()
         self.lock.release()
+    
+    def open_reorganize(self, order, order_name):
+        print("open_reorganize")
+        if not self.reorganise:
+            self.reorganise = Initiative_ihm(order, order_name, self)
+            
     
     def select_char(self, hwnd):
         if hwnd in self.unselected_perso:

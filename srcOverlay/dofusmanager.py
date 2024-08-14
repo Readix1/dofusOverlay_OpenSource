@@ -18,7 +18,7 @@ import pydirectinput
 
 class DofusManager(Observer):
     def __init__(self, config, dofus_handler):
-        Observer.__init__(self,["stop","switch_page"])  
+        Observer.__init__(self,["stop","switch_page", "reorganise"])  
         self.config=config
         self.mode = "combat"
         self.dofus_handler = dofus_handler
@@ -61,6 +61,8 @@ class DofusManager(Observer):
                 self.next_turn()
             elif key.name == self.config["keyboard_bindings"]['focus_dofus']:
                 self._open_current()
+            elif key.name == self.config["keyboard_bindings"]['change_initiative']:
+                self.notify('reorganise')
 
     def on_click(self, x,y,button, pressed):
         if(self.allow_event() and ( button.name=="x2" or button.name=="x1" ) and pressed==False):
