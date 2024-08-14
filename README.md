@@ -11,9 +11,9 @@ Je vous invite toute fois à rester vigilent et à ne pas oublier que les logici
 
 ## Installation:
 
-- Telechargez dofusOverkay.zip
-- Dezipez le dofus
-- executez dofusOverlay.exe (il est possible que le logiciel ne soit pas reconnu par windows et que cela demande une autorisation)
+- Téléchargez dofusOverlay.zip de la dernière release située à droite : [Release v1.0](https://github.com/Readix1/dofusOverlay_OpenSource/releases/tag/v1.0)
+- Dézipez le dofus
+- Exécutez dofusOverlay.exe (il est possible que le logiciel ne soit pas reconnu par windows et que cela demande une autorisation)
 
 
 
