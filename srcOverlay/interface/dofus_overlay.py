@@ -10,7 +10,7 @@ import pythoncom
 
 
 class DofusOverlay(Overlay):
-    def __init__(self,config, order, order_name, dh=None):
+    def __init__(self,config, order, order_name, open_dofus_methode=None, dh=None):
         Overlay.__init__(self, config["overlay"]['posx'],config["overlay"]["posy"], alpha=config["overlay"]['opacity'])
         self.bind("<<Destroy>>", lambda e: self.destroy())
         self.imagePath = {k:config['img']['path']+v['classe']+'_'+v['sexe']+".png" for k,v in config['img'].items() if k != 'path'}
@@ -30,6 +30,7 @@ class DofusOverlay(Overlay):
         
         self.is_visible = True
         
+        self.open_dofus_methode=open_dofus_methode
         self.dh = dh
         
         
@@ -124,11 +125,14 @@ class DofusOverlay(Overlay):
         return [hwnd for hwnd in self.perso if hwnd not in self.unselected_perso]
     
     def select(self,hwnd):
-        pythoncom.CoInitialize()
-        win32gui.SetForegroundWindow(hwnd)
-        shell = win32com.client.Dispatch("WScript.Shell")
-        shell.SendKeys('^')
-        win32gui.ShowWindow(self.hwnd,3)
-        self.update_perso(hwnd)
+        if self.open_dofus_methode:
+            self.open_dofus_methode(hwnd)
+        else:
+            pythoncom.CoInitialize()
+            win32gui.SetForegroundWindow(hwnd)
+            shell = win32com.client.Dispatch("WScript.Shell")
+            shell.SendKeys('^')
+            win32gui.ShowWindow(self.hwnd,3)
+            self.update_perso(hwnd)
 
         

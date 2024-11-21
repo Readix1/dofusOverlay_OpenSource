@@ -68,6 +68,11 @@ class DofusManager(Observer):
         if(self.allow_event() and ( button.name=="x2" or button.name=="x1" ) and pressed==False):
             self.mouse.click(ppmouse.Button.left, 1)
             self._switch_next_win()
+            
+    
+    def _open_dofus(self, hwnd):
+        self.notify('switch_page', hwnd)
+        return self.dofus_handler.dofusDict[hwnd].open()
 
                 
 

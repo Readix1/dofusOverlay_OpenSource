@@ -16,6 +16,7 @@ class Page_Dofus():
         self.ini = ini
         _,self.pid = win32process.GetWindowThreadProcessId(hwnd)
         self.name=""
+        self.classe=""
         self.set_name()
         self.set_initiative()
         logging.info(f"nom: {self.name}, hwnd: {hwnd}")
@@ -28,9 +29,8 @@ class Page_Dofus():
             self.name = ""
         else:
             self.name = lname[0]
-        
-    def get_infos(self):
-        return self.hwnd, self.pid, self.name
+            self.classe = lname[1]
+
        
     def set_initiative(self):
         self.ini = Initiative.getIni(self.name)
@@ -54,11 +54,7 @@ class Page_Dofus():
             logging.error(f"Error when open {self.name} {e}")
             return
         
-            
-    def press(self, lParam):
-        win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
-        time.sleep(0.1)
-        win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP, None, lParam)
+        
         
     def __str__(self):
         return str(self.hwnd) +":" +self.name

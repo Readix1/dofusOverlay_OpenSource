@@ -67,11 +67,6 @@ class DofusHandler(Thread,Observer):
         win32gui.EnumWindows(dofusEnumerationHandler, tmp)
         return tmp
     
-    # def append_dofus_and_sort(self,dofus):
-    #     for d in dofus:
-    #         if d not in self.dofus:
-    #             self.dofus.append(d)
-    #     self.dofus = sorted(self.dofus, key=lambda x: x.ini, reverse=True)
     
     def add_win(self,hwnd):
         self.lock.acquire()
