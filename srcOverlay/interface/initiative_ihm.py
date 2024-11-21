@@ -25,8 +25,6 @@ class Initiative_ihm(Toplevel):
         with open("ressources/initiative.json", "r") as f:
             self.initiative = json.load(f)
         
-        print(self.initiative)
-        
         ### Header
         header_frame = Frame(self)
         header_frame.pack(padx=3, pady=3, expand=True, fill="x")
@@ -37,7 +35,7 @@ class Initiative_ihm(Toplevel):
         header_label = Label(header_frame, text="Reorganizer", font=("Arial", 25, "bold"))
         header_label.pack(side="left", expand=True, fill="x")
         
-        close_button = Button(header_frame, text="X", command=self.destroy)
+        close_button = Button(header_frame, text="X", command=self.close)
         close_button.pack(side="right",)
         
         ### Personnage
@@ -91,7 +89,11 @@ class Initiative_ihm(Toplevel):
         self._offsetx = event.x
         self._offsety = event.y
         
-        
+    def close(self):
+        if self.overlay:
+            self.overlay.reorganise = None
+        self.destroy()  
+          
     def enter(self):
         for name, v in self.ini_dict.items():
             if self.check_dict[name].get() == 1:

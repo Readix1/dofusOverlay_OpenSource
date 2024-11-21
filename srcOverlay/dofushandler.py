@@ -131,7 +131,7 @@ class DofusHandler(Thread,Observer):
         if not curr in self.get_hwnds():
             curr=self.curr_hwnd if self.curr_hwnd in self.get_hwnds() else self.get_hwnds()[0]
         next_hwnd = self.get_next_hwnd(curr)
-        self.notify("update_selected_perso",next_hwnd)
+        self.notify("update_selected_perso", next_hwnd)
         return self.dofusDict[next_hwnd]
     
     def get_previous_dofus(self):
@@ -201,12 +201,12 @@ class DofusHandler(Thread,Observer):
             
             
 def dofusEnumerationHandler(hwnd, top_windows):
-    name = win32gui.GetWindowText(hwnd)
+    # name = win32gui.GetWindowText(hwnd)
     _,pid = win32process.GetWindowThreadProcessId(hwnd)
     try:
         exe = psutil.Process(pid).exe()
         visible = win32gui.IsWindowVisible(hwnd)
-        if("dofus 2" in name.lower() and "dofus.exe" in exe.lower() and visible):
+        if ("dofus.exe" in exe.lower() and visible):#("dofus 2" in name.lower() and "dofus.exe" in exe.lower() and visible)
             top_windows.append(hwnd)
     except psutil.NoSuchProcess:
         pass
