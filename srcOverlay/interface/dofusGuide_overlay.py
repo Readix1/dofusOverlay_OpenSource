@@ -1,3 +1,5 @@
+import sys
+sys.path.append(r'd:\all\bot\python\pythondof\dofusOverlay_OP/')
 from srcOverlay.interface.overlay import Overlay
 from srcOverlay.interface.reorganiser import Reorganiser
 
@@ -5,7 +7,8 @@ from threading import RLock
 import tkinter as tk
 from PIL import Image,ImageTk
 
-class DofusOverlay(Overlay):
+
+class DofusGuideOverlay(Overlay):
     def __init__(self, config, order, open_dofus_methode=None, dh=None):
         Overlay.__init__(self, config["overlay"]['posx'],config["overlay"]["posy"], alpha=config["overlay"]['opacity'])
         self.bind("<<Destroy>>", lambda e: self.destroy())
@@ -122,4 +125,18 @@ class DofusOverlay(Overlay):
         if self.open_dofus_methode:
             self.open_dofus_methode(indice)
 
+
+if __name__ == "__main__":
+    import json
+    from srcOverlay.Page_Dofus import Page_Dofus
+    
+    pages_dofus = [Page_Dofus(1, ini=1), Page_Dofus(0, ini=2), Page_Dofus(4, ini=4)]
+    pages_dofus[0].name = "test1"
+    pages_dofus[1].name = "Indimo"
+    pages_dofus[2].name = "Readix"
+    
+    with open("ressources/config.json",encoding="utf-8") as file:
+        config = json.load(file)
         
+    ihm = DofusGuideOverlay(config, pages_dofus)
+    ihm.mainloop()

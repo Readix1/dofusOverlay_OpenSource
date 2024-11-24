@@ -1,26 +1,7 @@
 {
     "img" : {
-        "path": "ressources\\img\\",
-        "Readix-panda" : {"classe":"pandawa",
-            "sexe":"male"},
-        "Readix-Sadi" : {"classe":"sadida",
-                "sexe":"male"},
-        "Readix-Eni" : {"classe":"eniripsa",
-                "sexe":"femelle"},
-        "Roublar" : {"classe":"roublard",
-            "sexe":"male"},
-        "Tc-fecaa" : {"classe":"feca",
-            "sexe":"femelle"},
-        "Tc-arc" : {"classe":"cra",
-            "sexe":"femelle"},
-        "Tc-panda" : {"classe":"pandawa",
-            "sexe":"femelle"},
-        "Beras" : {"classe":"beras",
-                "sexe":""},
-        "" : {"classe":"autre",
-                    "sexe":"0"},
-        "Autre" : {"classe":"autre",
-                    "sexe":"0"}
+        "path": "ressources\\img\\"
+
     },
     "keyboard_bindings" :
     {
@@ -28,14 +9,16 @@
         "next_win": "tab",
         "prev_win": "shift",
         "next_turn":"f1",
-        "focus_dofus" : "",
-        "change_initiative" : "f3"
+        "focus_dofus" : "f13",
+        "reorganizer" : "f11",
+        "actualise" : "f4"
     },
     "overlay" :
     {
         "posx" : 0,
         "posy" : 0,
         "actif":1,
+        "auto-actualise":1,
         "opacity":0.8
     }
 }

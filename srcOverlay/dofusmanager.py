@@ -61,20 +61,15 @@ class DofusManager(Observer):
                 self.next_turn()
             elif key.name == self.config["keyboard_bindings"]['focus_dofus']:
                 self._open_current()
-            elif key.name == self.config["keyboard_bindings"]['change_initiative']:
-                self.notify('reorganise')
+            elif key.name == self.config["keyboard_bindings"]['reorganizer']:
+                self.dofus_handler.open_reorganize()
+            elif key.name == self.config["keyboard_bindings"]['actualise']:
+                self.dofus_handler.actualise()
 
     def on_click(self, x,y,button, pressed):
         if(self.allow_event() and ( button.name=="x2" or button.name=="x1" ) and pressed==False):
             self.mouse.click(ppmouse.Button.left, 1)
-            self._switch_next_win()
-            
-    
-    def _open_dofus(self, hwnd):
-        self.notify('switch_page', hwnd)
-        return self.dofus_handler.dofusDict[hwnd].open()
-
-                
+            self._switch_next_win()                
 
            
             
@@ -85,7 +80,7 @@ class DofusManager(Observer):
 
     def _stop(self):
         self.keyboard_thread.stop()
-        self.notify('stop')
+        self.dofus_handler.stop()
         self.running = False
     
     def next_turn(self):
@@ -95,21 +90,17 @@ class DofusManager(Observer):
     def _switch_previous_win(self):
         if( not self.allow_event()):
             return
-        d = self.dofus_handler.get_previous_dofus()
-        self.notify('switch_page', d.hwnd)
-        return d.open()
+        self.dofus_handler.open_previous_page()
     
     def _switch_next_win(self):
         if( not self.allow_event()):
             return
-        d = self.dofus_handler.get_next_dofus()
-        self.notify('switch_page', d.hwnd)
-        return d.open()
-            
+        self.dofus_handler.open_next_page()
+
     def _open_current(self):
-        d = self.dofus_handler.get_next_dofus()
-        self.notify('switch_page', d.hwnd)
-        return d.open()       
+        self.dofus_handler.open_current_page()
+       
+    
 
  
 

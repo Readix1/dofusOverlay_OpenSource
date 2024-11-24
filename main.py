@@ -29,24 +29,22 @@ with open("ressources/config.json",encoding="utf-8") as file:
     config = json.load(file)
 
 dh = DofusHandler()
-dh.start()
+if config["overlay"]["auto-actualise"]:
+    dh.start()
 dm = DofusManager(config,dh)
 
-dm.add_observer("stop",dh.stop)
-
 if config["overlay"]["actif"]:
-    interface = DofusOverlay(config, dh.get_hwnds_order(), dh.get_names_order(), dm._open_dofus, dh=dh)
-    Listener(dm, interface).start()
+    interface = DofusOverlay(config, dh.dofus, dh.open_index_dofus, dh=dh)
+    if config["overlay"]["auto-actualise"]:
+        Listener(dh).start()
     # ThreadListener(interface)
 
-    dm.add_observer("stop",interface.stop)
-    dm.add_observer("switch_page",lambda hwnd: interface.update_perso_and_visibility(hwnd))
-    dm.add_observer("reorganise", lambda : interface.open_reorganize(dh.get_hwnds_order(), dh.get_names_order()))
-
-    dh.add_observer("update_hwnd",lambda order,order_name : interface.update_order(order,order_name))
-    dh.add_observer("update_selected_perso",lambda hwnd : interface.update_perso(hwnd))
+    dh.add_observer("reorganise", lambda dofus: interface.open_reorganize(dofus))
+    dh.add_observer("stop",interface.stop)
+    dh.add_observer("update_shown_page",lambda indice: interface.update_perso(indice))
+    dh.add_observer("update_visible",lambda hwnd: interface.update_visibility(hwnd))
+    dh.add_observer("update_order",lambda order : interface.update_order(order))
     dh.add_observer('getHwnd',lambda : interface.getHwnd())
-    dh.add_observer('get_selected_pages',lambda : interface.get_selected_pages())
-
+    
     interface.mainloop()
 dh.join()

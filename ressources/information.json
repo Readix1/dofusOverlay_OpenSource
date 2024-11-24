@@ -1,0 +1,37 @@
+{
+    "Tc-hupper": {
+        "classe": "huppermage",
+        "sexe": "male",
+        "ini": 1
+    },
+    "Tc-fecaa": {
+        "classe": "feca",
+        "sexe": "femelle",
+        "ini": 1
+    },
+    "Reedix": {
+        "classe": "eliotrope",
+        "sexe": "femelle",
+        "ini": 0
+    },
+    "Tc-arc": {
+        "classe": "cra",
+        "sexe": "male",
+        "ini": 2
+    },
+    "Indimo": {
+        "classe": "iop",
+        "sexe": "male",
+        "ini": 3
+    },
+    "Divahle": {
+        "classe": "Feca",
+        "sexe": "femelle",
+        "ini": 6
+    },
+    "Chamontorm": {
+        "classe": "sacrieur",
+        "sexe": "femelle",
+        "ini": 6
+    }
+}
