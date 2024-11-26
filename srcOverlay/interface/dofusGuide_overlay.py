@@ -27,6 +27,9 @@ class DofusGuideOverlay(Overlay):
         
         self.is_dragging = False
         self.able_to_drag = True
+        
+        self.dragging_index = None  # Indice de l'image en cours de drag
+        self.drag_image = None  # Référence à l'image temporaire
                 
         self.perso = dict()
         self.order = []
@@ -53,12 +56,9 @@ class DofusGuideOverlay(Overlay):
         self.canvas.tag_bind(btn_next[1], "<Enter>", lambda e: self.canvas.config(cursor="hand2"))
         self.canvas.tag_bind(btn_next[1], "<Leave>", lambda e: self.canvas.config(cursor=""))
         
-        
         self.chevrons = dessiner_chevron(self.canvas, 50, 70)
         
-        
         self.current_shown = 0
-        
         
         self.is_visible = True
         
@@ -163,17 +163,31 @@ class DofusGuideOverlay(Overlay):
 
     def update_order(self, order):
         self.lock.acquire()
-
         self.order = order
         self.hwnds = [d.hwnd for d in order]
-        
-        
-        #building new
+            
+        # Supprimer toutes les images existantes du canvas
+        # for i, dofus in enumerate(self.order):
+        #     if dofus in self.perso:
+        #         label_avatar = self.perso[dofus]
+        #         if label_avatar.window_id !=i:
+        #             # if hasattr(label_avatar, "window_id"):  # Vérifier si l'attribut existe
+        #             self.canvas.delete(label_avatar.window_id)  # Supprimer l'objet Canvas
+        #             label_avatar.destroy()  # Détruire le widget associé
+        # # self.perso.clear()
+
+        # for i, dofus in enumerate(order):
+        #     if dofus in self.perso:
+        #         label_avatar = self.perso[dofus]
+        #         if label_avatar.window_id !=i:
+        #             self.create_image(dofus, i)  # Recrée un nouvel avatar pour chaque élément
+        #     else:
+        #         self.create_image(dofus, i)
+                
         for i, dofus in enumerate(order):
             self.create_image(dofus, i)
         
         self.update_perso(self.current_shown)
-        self.update()
         self.resize()
         self.lock.release()
         
@@ -187,18 +201,102 @@ class DofusGuideOverlay(Overlay):
         # f = tk.Label(self.frame_perso, image=img, background="#1b1a1d")
         
         label_avatar = tk.Label(self, image=img, bg=self.background_color)
-        self.canvas.create_window(self.get_position(indice), window=label_avatar)  # Positionné dans le Canvas
+        
+        window_id = self.canvas.create_window(
+            self.get_position(indice), window=label_avatar
+        )
         
         label_avatar.bind("<Button-1>", lambda e, indice=indice : self.select(indice))
         label_avatar.bind("<Control-1>", lambda e, dofus=dofus : self.select_char(dofus))
         
-        label_avatar.bind("<Enter>", self.disable_drag)  # Désactiver le drag au survol
+        label_avatar.bind("<Enter>", lambda e, dofus=dofus : self.disable_drag(e, dofus))  # Désactiver le drag au survol
         label_avatar.bind("<Leave>", self.enable_drag)  # Réactiver le drag après avoir quitté
+        
+        label_avatar.bind("<ButtonPress-1>", lambda e, i=indice: self.start_drag(e, i, window_id))
+        label_avatar.bind("<B1-Motion>", lambda e, dofus=dofus : self.drag(e, dofus))
+        label_avatar.bind("<ButtonRelease-1>", lambda e: self.stop_drag(e))
 
+        label_avatar.config(cursor="hand2")
         
         label_avatar.image = img
+        label_avatar.window_id = window_id
         # f.pack(side="left",padx=5, pady=5)
         self.perso[dofus] = label_avatar
+        
+    def disable_drag(self, event, dofus):
+        self.able_to_drag = False  # Désactiver le drag en dehors des labels
+        # self.perso[dofus].config(cursor="hand2")
+        self.perso[dofus].config(cursor="hand2")
+
+
+    def enable_drag(self, event):
+        self.able_to_drag = True  # Réactiver le drag après avoir quitté les labels
+        self.canvas.config(cursor="")
+        
+    def start_drag(self, event, index, window_id):
+        """Commence le drag d'une image."""
+        self.dragging_index = index
+        self._offset_x = event.x
+        self._offset_y = event.y
+        self.canvas.config(cursor="hand2")
+        print("start_drag", self.dragging_index, self._offset_x, self._offset_y)
+
+    def drag(self, event, dofus):
+        """Déplace l'image en cours de drag."""
+        # if self.drag_image is not None:
+        #     # Met à jour la position de l'image en fonction du mouvement de la souris
+        #     x = event.x_root - self.winfo_rootx() - self._offset_x
+        #     y = event.y_root - self.winfo_rooty() - self._offset_y
+        #     self.canvas.coords(self.drag_image, x, y)
+        if self.is_valid_drop_zone(event.x, event.y):
+            self.perso[dofus].config(cursor="hand2")  # Zone valide
+        else:
+            self.perso[dofus].config(cursor="no")  # Zone non valide
+
+    def stop_drag(self, event):
+        """Stoppe le drag et réorganise les images."""
+        if self.dragging_index is not None:
+            # Détecter la nouvelle position
+            new_index = self.get_drop_index(event.y, self.dragging_index)
+            print("new_index", new_index)
+            if new_index is not None and new_index != self.dragging_index:
+                # Réorganiser self.order
+                moved_item = self.order[self.current_shown]
+                self.order.insert(new_index, self.order.pop(self.dragging_index))
+                for i, dofus in enumerate(self.order):
+                    dofus.ini = len(self.order)-i
+                    
+                # Mettre à jour `self.current_shown` pour qu'il corresponde au nouvel index de l'élément affiché
+                self.current_shown = self.order.index(moved_item)
+
+                self.update_order(self.order)  # Mettre à jour l'affichage avec le nouvel ordre
+
+            # Réinitialiser les variables de drag
+            self.dragging_index = None
+            self.dragging_window_id = None
+            self.canvas.config(cursor="hand2")
+        else:
+            print("stop_drag None", )
+
+    def get_drop_index(self, mouse_y, current_index):
+        """Détermine l'indice cible où l'image est déposée."""
+        for i, _ in enumerate(self.order):
+            x, y = self.get_position(i)
+            if y <= mouse_y+int(self.get_position(current_index)[1]) <= y + self.head_width:
+                return i
+        # Si la souris est en dehors, retourner None ou l'indice final
+        # if mouse_y > self.get_position(len(self.order) - 1)[1]:
+        #     return len(self.order) - 1
+        return None
+
+    def is_valid_drop_zone(self, x, y):
+        """Détermine si la position (x, y) est dans une zone valide."""
+        # Par exemple, vérifier si la souris est dans un rectangle défini comme une zone valide
+        # valid_zone = (100, 100, 500, 500)  # Coordonnées du rectangle valide
+        # return valid_zone[0] <= x <= valid_zone[2] and valid_zone[1] <= y <= valid_zone[3]
+    
+        return self.get_drop_index(y, self.dragging_index)!=None # and 17 <=x+int(self.get_position(self.dragging_index)[0]) <= 17+self.head_width
+
     
     def open_reorganize(self, order):
         self.order = order
@@ -218,16 +316,11 @@ class DofusGuideOverlay(Overlay):
         return (17, 51+(self.head_width+10)*indice)
     
     def select(self, indice):
-        
         if self.open_dofus_methode:
             self.open_dofus_methode(indice)
     
-    def disable_drag(self, event):
-        self.able_to_drag = False  # Désactiver le drag en dehors des labels
 
-
-    def enable_drag(self, event):
-        self.able_to_drag = True  # Réactiver le drag après avoir quitté les labels
+        
 
 
 def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
