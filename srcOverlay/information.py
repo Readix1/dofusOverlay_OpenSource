@@ -7,7 +7,12 @@ class Information:
     
     with open(path, "r",encoding='utf-8') as f:
         information = json.load(f)
-        
+    
+    @classmethod
+    def loadInfo(self):
+        with open(path, "r",encoding='utf-8') as f:
+            self.information = json.load(f)
+    
     @classmethod   
     def updateInfo(self, dofus):
         res = dofus.serialize()
@@ -34,6 +39,8 @@ class Information:
             dofus.classe = self.information[dofus.name]["classe"]
             dofus.sexe = self.information[dofus.name]["sexe"]
             dofus.ini = int(self.information[dofus.name]["ini"])
+            dofus.type = self.information[dofus.name]["type"]
+            dofus.head = self.information[dofus.name]["head"]
             
 
     

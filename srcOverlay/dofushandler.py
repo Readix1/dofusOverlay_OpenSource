@@ -51,6 +51,11 @@ class DofusHandler(Thread,Observer):
     def save_dofus_info(self):
         Information.saveMultipleInfo(self.dofus)
         
+    def load_dofus_info(self):
+        Information.loadInfo()
+        for d in self.dofus:
+            d.get_info()
+        
     def get_selected_pages(self):
         return [i for i, d in enumerate(self.dofus) if d.selected]
 

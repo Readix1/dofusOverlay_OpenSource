@@ -1,6 +1,7 @@
 {
     "img" : {
-        "path": "ressources\\img\\"
+        "path": "ressources\\img\\",
+        "path2": "ressources\\img_overlay\\"
 
     },
     "keyboard_bindings" :

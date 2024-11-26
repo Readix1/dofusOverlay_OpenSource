@@ -7,6 +7,7 @@ print("fin import DofusHandler --- %s seconds ---" % (time.time() - start_time))
 from srcOverlay.listener import Listener
 from srcOverlay.dofusmanager import DofusManager
 from srcOverlay.interface.dofus_overlay import DofusOverlay
+from srcOverlay.interface.dofusGuide_overlay import DofusGuideOverlay
 import logging
 import json 
 import argparse
@@ -34,7 +35,7 @@ if config["overlay"]["auto-actualise"]:
 dm = DofusManager(config,dh)
 
 if config["overlay"]["actif"]:
-    interface = DofusOverlay(config, dh.dofus, dh.open_index_dofus, dh=dh)
+    interface = DofusGuideOverlay(config, dh.dofus, dh.open_index_dofus, dh=dh)
     if config["overlay"]["auto-actualise"]:
         Listener(dh).start()
     # ThreadListener(interface)

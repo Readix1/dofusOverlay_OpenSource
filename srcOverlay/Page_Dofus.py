@@ -18,6 +18,8 @@ class Page_Dofus():
         self.name=""
         self.classe=""
         self.sexe="male"
+        self.type="head"
+        self.head="1"
         self.ini = ini
         
         self.selected = True
@@ -28,7 +30,7 @@ class Page_Dofus():
     def serialize(self):
         if self.name == "":
             return {}
-        return {self.name:{ "classe":self.classe, "sexe":self.sexe, "ini":self.ini}}
+        return {self.name:{ "classe":self.classe, "sexe":self.sexe, "ini":self.ini, "type":self.type, "head":self.head}}
     
     def get_info(self):
         if self.name == "":

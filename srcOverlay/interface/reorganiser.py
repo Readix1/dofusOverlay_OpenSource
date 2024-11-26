@@ -66,7 +66,7 @@ class Reorganiser(CTkToplevel):
         save_button = CTkButton(save_load_button_frame, text="Save", command=self.save, width=40, height=40)
         save_button.pack(side="left", anchor="nw", padx=(20, 5), pady=10)
         
-        load_button = CTkButton(save_load_button_frame, text="Load", width=40, height=40)
+        load_button = CTkButton(save_load_button_frame, text="Load", width=40, height=40 , command=self.load)
         load_button.pack(side="left", anchor="nw", pady=10)
         
         
@@ -218,7 +218,6 @@ class Reorganiser(CTkToplevel):
     def release_dragwin(self, event):
         self._offsetx = 0
         self._offsety = 0
-        pass  # No special behavior needed for window drag release
     
     def close(self):
         if self.overlay:
@@ -244,6 +243,11 @@ class Reorganiser(CTkToplevel):
     def save(self):
         if self.dh:
             self.dh.save_dofus_info()
+    
+    def load(self):
+        if self.dh:
+            self.dh.load_dofus_info()
+            self.create_rows()
         
 
 if __name__ == "__main__":

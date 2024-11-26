@@ -9,9 +9,7 @@ class DofusOverlay(Overlay):
     def __init__(self, config, order, open_dofus_methode=None, dh=None):
         Overlay.__init__(self, config["overlay"]['posx'],config["overlay"]["posy"], alpha=config["overlay"]['opacity'])
         self.bind("<<Destroy>>", lambda e: self.destroy())
-        self.imagePath = {k:config['img']['path']+v['classe']+'_'+v['sexe']+".png" for k,v in config['img'].items() if k != 'path'}
         self.perso = dict()
-        self.unselected_perso=[]
         self.order = []
         self.hwnds = []
         
