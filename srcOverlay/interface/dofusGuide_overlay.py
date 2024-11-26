@@ -201,9 +201,8 @@ class DofusGuideOverlay(Overlay):
         self.perso[dofus] = label_avatar
     
     def open_reorganize(self, order):
-        print("open_reorganize")
         self.order = order
-        if not self.reorganise and self.dh:
+        if not(self.reorganise) and self.dh:
             self.reorganise = Reorganiser(self.order, self, self.dh)
             
     

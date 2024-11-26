@@ -78,6 +78,7 @@ class Reorganiser(CTkToplevel):
         self.bind('<ButtonRelease-1>', self.release_dragwin)
     
     def actualise(self):
+        self.pages_dofus = sorted(self.dh.dofus, key=lambda x: x.ini, reverse=True)
         self.create_rows()
         self.update_ini()
         
@@ -198,8 +199,8 @@ class Reorganiser(CTkToplevel):
         dict_ini = {widget.identifier:len(self.pages_dofus)-i for i, widget in enumerate(self.row_widgets)}
         
         for dofus in self.pages_dofus:
-            self.ini_dict[dofus].set(dict_ini[dofus.name])
-            # dofus.ini = int(self.ini_dict[dofus].get())
+            if dofus.name in dict_ini:
+                self.ini_dict[dofus].set(dict_ini[dofus.name])
     
     # Dragging window
     def clickwin(self, event):

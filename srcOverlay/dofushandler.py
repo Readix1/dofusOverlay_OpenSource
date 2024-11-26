@@ -194,8 +194,8 @@ class DofusHandler(Thread,Observer):
     #         self.curr_hwnd = tmp
     #     return self.curr_hwnd
     
-    def __len__(self):
-        return len(self.dofus)
+    # def __len__(self):
+    #     return len(self.dofus)
     
     def remove_win(self,hwnd):
         self.lock.acquire()

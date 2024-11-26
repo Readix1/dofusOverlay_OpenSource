@@ -46,7 +46,7 @@ class Page_Dofus():
             self.ini = 0
         else:
             self.name = lname[0]
-            if not any(char.isdigit() for char in lname[1]) and not any(char.isdigit() for char in lname[0]) and self.classe == "":
+            if len(lname)>1 and not any(char.isdigit() for char in lname[1]) and not any(char.isdigit() for char in lname[0]) and self.classe == "":
                 self.classe = lname[1]
 
        
