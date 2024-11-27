@@ -199,7 +199,7 @@ class DofusGuideOverlay(Overlay):
             self.get_position(indice), window=label_avatar
         )
         
-        label_avatar.bind("<Control-1>", lambda e, dofus=dofus : self.select_char(dofus))
+        label_avatar.bind("<Control-1>", lambda e, dofus=dofus : self.unselect_char(dofus))
         
         label_avatar.bind("<Enter>", lambda e, dofus=dofus : self.disable_drag(e, dofus))  # Désactiver le drag au survol
         label_avatar.bind("<Leave>", self.enable_drag)  # Réactiver le drag après avoir quitté
@@ -295,9 +295,15 @@ class DofusGuideOverlay(Overlay):
     def ask_open_reorganize(self, order):
         self.task_queue.put(lambda order=order: self.open_reorganize(order))
     
-    def select_char(self, dofus):
+    def unselect_char(self, dofus):
         dofus.selected = not dofus.selected
         
+        self.update_selected_status(dofus)
+    
+    def ask_update_selected_status(self, dofus):
+        self.task_queue.put(lambda dofus=dofus: self.update_selected_status(dofus))
+    
+    def update_selected_status(self, dofus):
         if dofus.selected:
             self.perso[dofus].config(background=self.background_color)
         else:

@@ -152,7 +152,7 @@ class Reorganiser(CTkToplevel):
         # Checkbox
         checkbox_frame = CTkFrame(row_frame, width=40)
         checkbox_frame.pack(expand=True, side="left", fill="both", padx=5)
-        check_var = IntVar(value=1)
+        check_var = IntVar(value=dofus.selected)
         self.check_dict[dofus] = check_var
         active_checkbox = CTkCheckBox(checkbox_frame, variable=check_var, text="", width=0, height=0, checkbox_width=20, checkbox_height=20)
         active_checkbox.pack(anchor="nw", expand=True, padx=10, pady=10)
@@ -221,8 +221,8 @@ class Reorganiser(CTkToplevel):
         self._offsety = 0
     
     def close(self):
-        if self.overlay:
-            self.overlay.reorganise = None
+        # if self.overlay:
+        #     self.overlay.reorganise = None
         self.withdraw()
     
     def enter(self):
@@ -230,11 +230,13 @@ class Reorganiser(CTkToplevel):
             dofus.ini = int(self.ini_dict[dofus].get())
             dofus.classe = self.class_dict[dofus].get()
             dofus.sexe = self.gender_dict[dofus].get()
+            dofus.selected = self.check_dict[dofus].get()
             
-            print(dofus.name, dofus.ini, dofus.classe, dofus.sexe)
-        
-        if self.overlay:
-            self.overlay.reorganise = None
+            if self.overlay:
+                self.overlay.ask_update_selected_status(dofus)
+            
+        # if self.overlay:
+        #     self.overlay.reorganise = None
             
         if self.dh:
             self.dh.update_order()
