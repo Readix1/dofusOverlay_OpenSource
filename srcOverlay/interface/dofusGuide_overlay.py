@@ -52,8 +52,8 @@ class DofusGuideOverlay(Overlay):
         self.btn_next = self.open_button_image(self.canvas, width/2, 12+4, config['img']['path2']+"bouton.png", (20, 20))
         self.btn_next.bind("<Button-1>", lambda e : self.open_reorganize(self.order))
         
-        self.btn_next.bind("<Enter>", lambda e: self.btn_next.config(cursor="hand2"))
-        self.btn_next.bind("<Leave>", lambda e: self.btn_next.config(cursor=""))
+        self.btn_next.bind("<Enter>", lambda e, widget=self.btn_next: self.disable_drag(e, widget))  # Désactiver le drag au survol
+        self.btn_next.bind("<Leave>", lambda e: self.enable_drag(e))  # Réactiver le drag après avoir quitté
         
         
         self.chevrons = dessiner_chevron(self.canvas, 50, 70)
@@ -78,10 +78,6 @@ class DofusGuideOverlay(Overlay):
         # Replanifier la vérification de la file
         self.after(100, self.process_queue)
 
-    
-    def extend_button(self, *args):
-        print("extend_button")
-        self.update_order(self.order + self.order)
 
     def resize(self):
         h = self.get_position(len(self.order))[1]-15
@@ -92,10 +88,6 @@ class DofusGuideOverlay(Overlay):
             self.rect_bg,
             get_rounded_rectangle_coords(0, 0, self.width, h, 23)
         )
-        pass
-    
-
-
     
         
     def dragwin(self, event):
@@ -199,9 +191,13 @@ class DofusGuideOverlay(Overlay):
             self.get_position(indice), window=label_avatar
         )
         
+        label_avatar.image = img
+        label_avatar.window_id = window_id
+        self.perso[dofus] = label_avatar
+        
         label_avatar.bind("<Control-1>", lambda e, dofus=dofus : self.unselect_char(dofus))
         
-        label_avatar.bind("<Enter>", lambda e, dofus=dofus : self.disable_drag(e, dofus))  # Désactiver le drag au survol
+        label_avatar.bind("<Enter>", lambda e, widget=self.perso[dofus] : self.disable_drag(e, widget))  # Désactiver le drag au survol
         label_avatar.bind("<Leave>", self.enable_drag)  # Réactiver le drag après avoir quitté
         
         label_avatar.bind("<ButtonPress-1>", lambda e, i=indice: self.start_drag(e, i, window_id))
@@ -210,13 +206,9 @@ class DofusGuideOverlay(Overlay):
 
         label_avatar.config(cursor="hand2")
         
-        label_avatar.image = img
-        label_avatar.window_id = window_id
-        self.perso[dofus] = label_avatar
-        
-    def disable_drag(self, event, dofus):
+    def disable_drag(self, event, widget):
         self.able_to_drag = False  # Désactiver le drag en dehors des labels
-        self.perso[dofus].config(cursor="hand2")
+        widget.config(cursor="hand2")
 
 
     def enable_drag(self, event):
