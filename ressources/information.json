@@ -48,5 +48,12 @@
         "ini": 0,
         "type": "head",
         "head": "1"
+    },
+    "Holexand": {
+        "classe": "",
+        "sexe": "male",
+        "ini": 0,
+        "type": "head",
+        "head": "1"
     }
 }

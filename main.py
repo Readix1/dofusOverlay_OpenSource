@@ -41,6 +41,8 @@ if config["overlay"]["afficher_overlay"]:
     # ThreadListener(interface)
 
     dh.add_observer("reorganise", lambda dofus: interface.ask_open_reorganize(dofus))
+    dh.add_observer("update_shortcut", lambda shortcut_name, shortcut: dm.update_shortcut(shortcut_name, shortcut))
+    dh.add_observer("save_button", lambda : dm.save_config())
     dh.add_observer("stop",interface.stop)
     dh.add_observer("stop",dm.stop_manager)
     dh.add_observer("update_shown_page",lambda indice: interface.update_perso(indice))
@@ -50,4 +52,7 @@ if config["overlay"]["afficher_overlay"]:
     dh.add_observer('getHwnd',lambda : interface.getHwnd())
     
     interface.mainloop()
-dh.join()
+if config["overlay"]["auto-actualisation"]:
+    dh.join()
+else:
+    dm.listener.join()

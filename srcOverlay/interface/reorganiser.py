@@ -1,5 +1,7 @@
 from tkinter import IntVar, StringVar
-from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox
+from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox, CTkFont
+
+from pynput import keyboard
 
 class Reorganiser(CTkToplevel):
     def __init__(self, pages_dofus, overlay, dh):
@@ -18,6 +20,7 @@ class Reorganiser(CTkToplevel):
         self.personnage_frame = None
         self.dragging_row = None  # For drag and drop rows
         self.disable_window_drag = False  # New: Control window drag based on context
+        self.current=0
         
         self.ini_dict = {}
         self.check_dict = {}
@@ -69,6 +72,24 @@ class Reorganiser(CTkToplevel):
         load_button = CTkButton(save_load_button_frame, text="Load", width=40, height=40 , command=self.load)
         load_button.pack(side="left", anchor="nw", pady=10)
         
+        # raccourci Précédent / Suivant
+        raccourci_frame = CTkFrame(self.button_frame)
+        raccourci_frame.pack(fill="both",)
+        
+        self.next = load_image("ressources/img_overlay/next.png", (20, 20))
+        self.previous = load_image("ressources/img_overlay/next.png", (20, 20), rotate=True)
+        
+        raccourci_frame.grid_columnconfigure(0, weight=1)
+        raccourci_frame.grid_columnconfigure(1, weight=1)
+        
+        self.previous_button = CTkButton(raccourci_frame, text="Précédent", command=self.update_previous_shortcut, image=self.previous)
+        self.previous_button.grid(row=0, column=0, padx=(20, 5), pady=10)
+        self.previous_shortcut = ""
+        
+        self.next_button = CTkButton(raccourci_frame, text="Suivant", command=self.update_next_shortcut, image=self.next, compound="right")
+        self.next_button.grid(row=0, column=1,  pady=10, padx=(0, 10))
+        self.next_shortcut = ""
+        
         
         self.create_table()
         
@@ -76,6 +97,74 @@ class Reorganiser(CTkToplevel):
         self.bind('<Button-1>', self.clickwin)
         self.bind('<B1-Motion>', self.dragwin)
         self.bind('<ButtonRelease-1>', self.release_dragwin)
+        
+    def update_previous_shortcut(self):
+        self.previous_button.configure(text="")
+
+        # Démarrer un listener pour écouter les touches du clavier
+        self.start_update_shortcut_listener(self.previous_button, "previous_shortcut")
+        if self.previous_shortcut:
+            self.dh.update_shortcut("prev_win", self.previous_shortcut)
+            
+    
+    def update_next_shortcut(self):
+        self.next_button.configure(text="")
+
+        # Démarrer un listener pour écouter les touches du clavier
+        self.start_update_shortcut_listener(self.next_button, "next_shortcut")
+        if self.next_shortcut:
+            self.dh.update_shortcut("next_win", self.next_shortcut)
+    
+    def start_update_shortcut_listener(self, button, shortcut_attr_name):
+        def on_press(key):
+            try:
+                key_name = ""
+                if '_name_' in key.__dict__ :
+                    key_name = key.name
+                elif key.char:
+                    if ord(key.char) < 32:
+                        key_char = chr(ord('a') + ord(key.char) - 1)
+                        key_name = key_char
+                    else:
+                        key_name = str(key.char)
+                
+                if key_name == "shift":
+                    self.current=1
+                elif "ctrl"in key_name:
+                    self.current=2
+                else:
+                    prefix = ""
+                    if self.current==1:
+                        prefix+="shift+"
+                    elif self.current==2:
+                        prefix+="ctrl+"
+                        
+                    shortcut_name = prefix+str(key_name)
+                    setattr(self, shortcut_attr_name, shortcut_name)
+                    button.configure(text=shortcut_name)
+                    if shortcut_name and "next" in shortcut_attr_name:
+                        self.dh.update_shortcut("next_win", shortcut_name)
+                    else:
+                        self.dh.update_shortcut("prev_win", shortcut_name)
+                    
+                    self.current=0
+                    return False
+
+                
+            except AttributeError as e:
+                print(f"special key {key}", e)
+                return False
+        
+            
+        def on_release(key):
+            if '_name_' in key.__dict__ :
+                print(key.name)
+                if key.name == "shift" or "ctrl"in key.name:
+                    self.current=0
+
+        # Démarrer le listener
+        listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+        listener.start()
     
     def actualise(self):
         self.pages_dofus = sorted(self.dh.dofus, key=lambda x: x.ini, reverse=True)
@@ -223,6 +312,8 @@ class Reorganiser(CTkToplevel):
     def close(self):
         if self.dh:
             self.dh.stop()
+        else:
+            self.destroy()
         
     def reduce(self):
         # if self.overlay:
@@ -244,6 +335,8 @@ class Reorganiser(CTkToplevel):
             
         if self.dh:
             self.dh.update_order()
+
+            
         self.withdraw()
 
 
@@ -255,7 +348,16 @@ class Reorganiser(CTkToplevel):
         if self.dh:
             self.dh.load_dofus_info()
             self.create_rows()
-        
+            
+from PIL import Image, ImageTk
+from customtkinter import CTkImage
+            
+def load_image(path, size, rotate=False):
+    img = Image.open(path)
+    img = img.resize(size, Image.LANCZOS)
+    if rotate:
+        img = img.rotate(180)  # Rotation de 180 degrés
+    return CTkImage(img)
 
 if __name__ == "__main__":
     import sys
