@@ -62,7 +62,7 @@ class Page_Dofus():
         try :
             pythoncom.CoInitialize()
             shell = win32com.client.Dispatch("WScript.Shell")
-            shell.SendKeys('^')
+            shell.SendKeys('*')
             win32gui.ShowWindow(self.hwnd,3)
             win32gui.SetForegroundWindow(self.hwnd)
         except pywintypes.error as e :
