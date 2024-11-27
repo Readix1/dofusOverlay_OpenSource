@@ -21,54 +21,49 @@ class DofusGuideOverlay(Overlay):
         self.bind("<<Destroy>>", lambda e: self.destroy())
         
         self.width = width
+        self.height = height
+        self.open_dofus_methode=open_dofus_methode
+        self.dh = dh
+        
         self.head_width = 25
         self.background_color = "#1b1a1d"
-        
         self.configure(bg="red")  # Fond noir
         self.wm_attributes("-transparentcolor", "red")
         
         self.is_dragging = False
         self.able_to_drag = True
-        
         self.dragging_index = None  # Indice de l'image en cours de drag
         self.drag_image = None  # Référence à l'image temporaire
-                
+        self.reorganise = None
+        self.current_shown = 0
+        self.is_visible = True
+    
         self.perso = dict()
         self.order = []
         self.hwnds = []
         
-        
         self.lock = RLock()
         self.config_json = config
         
-        self.reorganise = None
+        self.init_canvas()
+        self.update_order(order)
         
-        self.canvas = tk.Canvas(self, width=width, height=height, bg="red", highlightthickness=0)
+        self.task_queue = queue.Queue()
+        self.after(100, self.process_queue)
+        
+    def init_canvas(self):
+        self.canvas = tk.Canvas(self, width=self.width, height=self.height, bg="red", highlightthickness=0)
         self.canvas.pack()
         
-        self.rect_bg = draw_rounded_rectangle(self.canvas , 0, 0, width, height, 23, fill=self.background_color)
+        self.rect_bg = draw_rounded_rectangle(self.canvas , 0, 0, self.width, self.height, 23, fill=self.background_color)
         
-        
-        self.btn_next = self.open_button_image(self.canvas, width/2, 12+4, config['img']['path2']+"bouton.png", (20, 20))
+        self.btn_next = self.open_button_image(self.canvas, self.width/2, 12+4, self.config_json['img']['path2']+"bouton.png", (20, 20))
         self.btn_next.bind("<Button-1>", lambda e : self.open_reorganize(self.order))
         
         self.btn_next.bind("<Enter>", lambda e, widget=self.btn_next: self.disable_drag(e, widget))  # Désactiver le drag au survol
         self.btn_next.bind("<Leave>", lambda e: self.enable_drag(e))  # Réactiver le drag après avoir quitté
         
-        
         self.chevrons = dessiner_chevron(self.canvas, 50, 70)
-        
-        self.current_shown = 0
-        
-        self.is_visible = True
-        
-        self.open_dofus_methode=open_dofus_methode
-        self.dh = dh
-        
-        self.update_order(order)
-        
-        self.task_queue = queue.Queue()
-        self.after(100, self.process_queue)
         
     def process_queue(self):
         """Vérifie la file et exécute les tâches dans le thread principal."""
@@ -118,66 +113,62 @@ class DofusGuideOverlay(Overlay):
         return [int(self.frame(),base=16)]
     
     def update_perso(self, indice):
-        self.lock.acquire()
-        position = self.get_position(indice)
-        
-        if position:
-            x, y = position
-            # Coordonner les sommets du chevron (triangle orienté vers la droite)
-            decal_x = 24
+        with self.lock:
+            position = self.get_position(indice)
             
-            points1 = [
-                x + decal_x, y
-            ]
+            if position:
+                x, y = position
+                # Coordonner les sommets du chevron (triangle orienté vers la droite)
+                decal_x = 24
+                
+                points1 = [
+                    x + decal_x, y
+                ]
+                
+                self.canvas.coords(self.chevrons, points1)  # Ajuster les coordonnées
+                self.canvas.itemconfig(self.chevrons, state="normal")  # Rendre visible
 
-            
-            self.canvas.coords(self.chevrons, points1)  # Ajuster les coordonnées
-            self.canvas.itemconfig(self.chevrons, state="normal")  # Rendre visible
-
-        self.current_shown = indice
-        self.lock.release()
+            self.current_shown = indice
         
     def update_visibility(self, hwnd):
-        self.lock.acquire()
-        if hwnd in self.hwnds+self.getHwnd():
-            if not self.is_visible:
-                self.deiconify()
-                self.is_visible = True
-        
-        elif self.is_visible:
-            self.withdraw()
-            self.is_visible = False
-        self.lock.release()
+        with self.lock:
+            if hwnd in self.hwnds+self.getHwnd():
+                if not self.is_visible:
+                    self.deiconify()
+                    self.is_visible = True
+            
+            elif self.is_visible:
+                self.withdraw()
+                self.is_visible = False
 
     def update_order(self, order):
-        self.lock.acquire()
-        self.order = order
-        self.hwnds = [d.hwnd for d in order]
-            
-        # Supprimer toutes les images existantes du canvas
-        # for i, dofus in enumerate(self.order):
-        #     if dofus in self.perso:
-        #         label_avatar = self.perso[dofus]
-        #         if label_avatar.window_id !=i:
-        #             # if hasattr(label_avatar, "window_id"):  # Vérifier si l'attribut existe
-        #             self.canvas.delete(label_avatar.window_id)  # Supprimer l'objet Canvas
-        #             label_avatar.destroy()  # Détruire le widget associé
-        # # self.perso.clear()
-
-        # for i, dofus in enumerate(order):
-        #     if dofus in self.perso:
-        #         label_avatar = self.perso[dofus]
-        #         if label_avatar.window_id !=i:
-        #             self.create_image(dofus, i)  # Recrée un nouvel avatar pour chaque élément
-        #     else:
-        #         self.create_image(dofus, i)
+        with self.lock:
+            self.order = order
+            self.hwnds = [d.hwnd for d in order]
                 
-        for i, dofus in enumerate(order):
-            self.create_image(dofus, i)
-        
-        self.update_perso(self.current_shown)
-        self.resize()
-        self.lock.release()
+            # Supprimer toutes les images existantes du canvas
+            # for i, dofus in enumerate(self.order):
+            #     if dofus in self.perso:
+            #         label_avatar = self.perso[dofus]
+            #         if label_avatar.window_id !=i:
+            #             # if hasattr(label_avatar, "window_id"):  # Vérifier si l'attribut existe
+            #             self.canvas.delete(label_avatar.window_id)  # Supprimer l'objet Canvas
+            #             label_avatar.destroy()  # Détruire le widget associé
+            # # self.perso.clear()
+
+            # for i, dofus in enumerate(order):
+            #     if dofus in self.perso:
+            #         label_avatar = self.perso[dofus]
+            #         if label_avatar.window_id !=i:
+            #             self.create_image(dofus, i)  # Recrée un nouvel avatar pour chaque élément
+            #     else:
+            #         self.create_image(dofus, i)
+                    
+            for i, dofus in enumerate(order):
+                self.create_image(dofus, i)
+            
+            self.update_perso(self.current_shown)
+            self.resize()
         
     def create_image(self, dofus, indice):
         path = self.config_json['img']['path2']+get_image_path(type=dofus.type, 
