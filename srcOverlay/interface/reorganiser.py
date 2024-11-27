@@ -51,7 +51,7 @@ class Reorganiser(CTkToplevel):
         
         close_button = CTkButton(frame, text="X", command=self.close, width=20, height=20)
         close_button.pack(side="right")
-        reduce_button = CTkButton(frame, text="_", command=self.close, width=20, height=20)
+        reduce_button = CTkButton(frame, text="_", command=self.reduce, width=20, height=20)
         reduce_button.pack(side="right")
         
         actualise_button = CTkButton(principal_button_frame, text="Actualiser", command=self.actualise)
@@ -221,6 +221,10 @@ class Reorganiser(CTkToplevel):
         self._offsety = 0
     
     def close(self):
+        if self.dh:
+            self.dh.stop()
+        
+    def reduce(self):
         # if self.overlay:
         #     self.overlay.reorganise = None
         self.withdraw()

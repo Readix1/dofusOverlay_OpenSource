@@ -41,7 +41,7 @@ class DofusManager(Observer):
             if key.name == self.config["keyboard_bindings"]['prev_win']:
                 self.current=1
             if key.name == self.config["keyboard_bindings"]['stop']:
-                self._stop()
+                self.ask_stop()
             
         except:
             logging.error('erreur on press dofusManager')
@@ -51,7 +51,7 @@ class DofusManager(Observer):
             if key.name == self.config["keyboard_bindings"]['prev_win']:
                 self.current=0
             elif key.name == self.config["keyboard_bindings"]['stop']:
-                self._stop()
+                self.ask_stop()
                 return False
             elif key.name == self.config["keyboard_bindings"]['next_win'] and self.current==0:
                 self._switch_next_win()
@@ -65,11 +65,13 @@ class DofusManager(Observer):
                 self.dofus_handler.open_reorganize()
             elif key.name == self.config["keyboard_bindings"]['actualise']:
                 self.dofus_handler.actualise()
+        return self.running
 
     def on_click(self, x,y,button, pressed):
         if(self.allow_event() and ( button.name=="x2" or button.name=="x1" ) and pressed==False):
             self.mouse.click(ppmouse.Button.left, 1)
             self._switch_next_win()                
+        return self.running
 
            
             
@@ -78,9 +80,12 @@ class DofusManager(Observer):
         return self.dofus_handler.is_dofus_window(tmp)
        
 
-    def _stop(self):
-        self.keyboard_thread.stop()
+    def ask_stop(self):
         self.dofus_handler.stop()
+        
+    def stop_manager(self):
+        self.listener.stop()
+        self.keyboard_thread.stop()
         self.running = False
     
     def next_turn(self):

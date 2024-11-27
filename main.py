@@ -42,6 +42,7 @@ if config["overlay"]["afficher_overlay"]:
 
     dh.add_observer("reorganise", lambda dofus: interface.ask_open_reorganize(dofus))
     dh.add_observer("stop",interface.stop)
+    dh.add_observer("stop",dm.stop_manager)
     dh.add_observer("update_shown_page",lambda indice: interface.update_perso(indice))
     if config["overlay"]["auto-disparition"]:
         dh.add_observer("update_visible",lambda hwnd: interface.update_visibility(hwnd))
