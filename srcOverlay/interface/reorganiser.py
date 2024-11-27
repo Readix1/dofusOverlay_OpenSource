@@ -59,19 +59,24 @@ class Reorganiser(CTkToplevel):
         reduce_button = CTkButton(frame, text="_", command=self.reduce, width=20, height=20)
         reduce_button.pack(side="right")
         
-        actualise_button = CTkButton(principal_button_frame, text="Actualiser", command=self.actualise)
+        self.refresh_img = load_image("ressources/img_overlay/refresh.png", (20, 20))
+        actualise_button = CTkButton(principal_button_frame, text="Actualiser", command=self.actualise, image=self.refresh_img)
         actualise_button.pack(side="bottom", anchor="sw", padx=20, pady=5)
-        launch_button = CTkButton(principal_button_frame, text="Lancer", command=self.enter)
+        
+        self.launch_img = load_image("ressources/img_overlay/start.png", (20, 20))
+        launch_button = CTkButton(principal_button_frame, text="Lancer", command=self.enter, image=self.launch_img)
         launch_button.pack(side="bottom", anchor="sw", padx=20, pady=5)
         
         # Save buttons
         save_load_button_frame = CTkFrame(self.button_frame)
         save_load_button_frame.pack(fill="both",)
         
-        save_button = CTkButton(save_load_button_frame, text="Save", command=self.save, width=40, height=40)
+        self.save_img = load_image("ressources/img_overlay/save.png", (20, 20))
+        save_button = CTkButton(save_load_button_frame, text="Save", command=self.save, width=40, height=40, image=self.save_img)
         save_button.pack(side="left", anchor="nw", padx=(20, 5), pady=10)
         
-        load_button = CTkButton(save_load_button_frame, text="Load", width=40, height=40 , command=self.load)
+        self.load_img = load_image("ressources/img_overlay/load.png", (20, 20))
+        load_button = CTkButton(save_load_button_frame, text="Load", width=40, height=40 , command=self.load, image=self.load_img)
         load_button.pack(side="left", anchor="nw", pady=10)
         
         # raccourci Précédent / Suivant
