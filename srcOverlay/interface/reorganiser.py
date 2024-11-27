@@ -28,6 +28,8 @@ class Reorganiser(CTkToplevel):
         self.gender_dict = {}
         
         self.row_widgets = []
+        self.previous_shortcut="Précédent"
+        self.next_shortcut="Suivant"
         
         self.principal_frame = CTkFrame(self)
         self.principal_frame.pack(padx=10, pady=10, expand=True, fill="both")
@@ -89,10 +91,11 @@ class Reorganiser(CTkToplevel):
         self.next_button = CTkButton(raccourci_frame, text="Suivant", command=self.update_next_shortcut, image=self.next, compound="right")
         self.next_button.grid(row=0, column=1,  pady=10, padx=(0, 10))
 
-        shortcuts = self.dh.get_shortcut()
-        
-        self.update_previous_button(shortcuts[0])
-        self.update_next_button(shortcuts[1])
+        if self.dh:
+            shortcuts = self.dh.get_shortcut()
+            
+            self.update_previous_button(shortcuts[0])
+            self.update_next_button(shortcuts[1])
         
                 
         self.create_table()
@@ -115,7 +118,7 @@ class Reorganiser(CTkToplevel):
 
         # Démarrer un listener pour écouter les touches du clavier
         self.start_update_shortcut_listener(self.previous_button, "previous_shortcut")
-        if self.previous_shortcut:
+        if self.dh and self.previous_shortcut:
             self.dh.update_shortcut("prev_win", self.previous_shortcut)
             
     
@@ -124,7 +127,7 @@ class Reorganiser(CTkToplevel):
 
         # Démarrer un listener pour écouter les touches du clavier
         self.start_update_shortcut_listener(self.next_button, "next_shortcut")
-        if self.next_shortcut:
+        if self.dh and self.next_shortcut:
             self.dh.update_shortcut("next_win", self.next_shortcut)
     
     def start_update_shortcut_listener(self, button, shortcut_attr_name):
@@ -144,6 +147,10 @@ class Reorganiser(CTkToplevel):
                     self.current=1
                 elif "ctrl"in key_name:
                     self.current=2
+                elif key_name == "esc":
+                    button.configure(text=getattr(self, shortcut_attr_name))
+                    self.current=0
+                    return False
                 else:
                     prefix = ""
                     if self.current==1:
@@ -154,10 +161,11 @@ class Reorganiser(CTkToplevel):
                     shortcut_name = prefix+str(key_name)
                     setattr(self, shortcut_attr_name, shortcut_name)
                     button.configure(text=shortcut_name)
-                    if shortcut_name and "next" in shortcut_attr_name:
-                        self.dh.update_shortcut("next_win", shortcut_name)
-                    else:
-                        self.dh.update_shortcut("prev_win", shortcut_name)
+                    if self.dh:
+                        if shortcut_name and "next" in shortcut_attr_name:
+                            self.dh.update_shortcut("next_win", shortcut_name)
+                        else:
+                            self.dh.update_shortcut("prev_win", shortcut_name)
                     
                     self.current=0
                     return False
@@ -182,10 +190,12 @@ class Reorganiser(CTkToplevel):
         self.pages_dofus = sorted(self.dh.dofus, key=lambda x: x.ini, reverse=True)
         self.create_rows()
         self.update_ini()
-        shortcuts = self.dh.get_shortcut()
         
-        self.update_previous_button(shortcuts[0])
-        self.update_next_button(shortcuts[1])
+        if self.dh:
+            shortcuts = self.dh.get_shortcut()
+            
+            self.update_previous_button(shortcuts[0])
+            self.update_next_button(shortcuts[1])
         
         
     def create_rows(self):
