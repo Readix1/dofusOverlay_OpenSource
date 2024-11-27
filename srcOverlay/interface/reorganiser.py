@@ -223,7 +223,7 @@ class Reorganiser(CTkToplevel):
     def close(self):
         if self.overlay:
             self.overlay.reorganise = None
-        self.destroy()
+        self.withdraw()
     
     def enter(self):
         for dofus in self.pages_dofus:
@@ -238,7 +238,7 @@ class Reorganiser(CTkToplevel):
             
         if self.dh:
             self.dh.update_order()
-        self.destroy()
+        self.withdraw()
 
 
     def save(self):

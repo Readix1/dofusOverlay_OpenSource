@@ -40,7 +40,7 @@ if config["overlay"]["afficher_overlay"]:
         Listener(dh).start()
     # ThreadListener(interface)
 
-    dh.add_observer("reorganise", lambda dofus: interface.open_reorganize(dofus))
+    dh.add_observer("reorganise", lambda dofus: interface.ask_open_reorganize(dofus))
     dh.add_observer("stop",interface.stop)
     dh.add_observer("update_shown_page",lambda indice: interface.update_perso(indice))
     if config["overlay"]["auto-disparition"]:

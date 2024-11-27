@@ -8,6 +8,8 @@ import tkinter as tk
 from tkinter import font
 from PIL import Image,ImageTk
 
+import queue
+
 
 dict_head = {"feca":10, "osamodas":20, "enutrof":30, "sram":40, "xelor":50, "ecaflip":60, "eniripsa":70, 
              "iop":80, "cra":90, "sadida":100, "sacrieur":110, "pandawa":120, "roublard":130, "zobal":140, 
@@ -46,15 +48,13 @@ class DofusGuideOverlay(Overlay):
         
         self.rect_bg = draw_rounded_rectangle(self.canvas , 0, 0, width, height, 23, fill=self.background_color)
         
-        # Dessiner le bouton arrondi
-        btn_next = draw_rounded_button(self.canvas, width/2, 12+4, 11, ">", fill="gray", outline=self.background_color, width=1, font=(font.families()[20], 12, "bold"))
-        self.canvas.tag_bind(btn_next[0], "<Button-1>", lambda e : self.open_reorganize(self.order))
-        self.canvas.tag_bind(btn_next[1], "<Button-1>", lambda e : self.open_reorganize(self.order))
         
-        self.canvas.tag_bind(btn_next[0], "<Enter>", lambda e: self.canvas.config(cursor="hand2"))
-        self.canvas.tag_bind(btn_next[0], "<Leave>", lambda e: self.canvas.config(cursor=""))
-        self.canvas.tag_bind(btn_next[1], "<Enter>", lambda e: self.canvas.config(cursor="hand2"))
-        self.canvas.tag_bind(btn_next[1], "<Leave>", lambda e: self.canvas.config(cursor=""))
+        self.btn_next = self.open_button_image(self.canvas, width/2, 12+4, config['img']['path2']+"bouton.png", (20, 20))
+        self.btn_next.bind("<Button-1>", lambda e : self.open_reorganize(self.order))
+        
+        self.btn_next.bind("<Enter>", lambda e: self.btn_next.config(cursor="hand2"))
+        self.btn_next.bind("<Leave>", lambda e: self.btn_next.config(cursor=""))
+        
         
         self.chevrons = dessiner_chevron(self.canvas, 50, 70)
         
@@ -66,6 +66,18 @@ class DofusGuideOverlay(Overlay):
         self.dh = dh
         
         self.update_order(order)
+        
+        self.task_queue = queue.Queue()
+        self.after(100, self.process_queue)
+        
+    def process_queue(self):
+        """Vérifie la file et exécute les tâches dans le thread principal."""
+        while not self.task_queue.empty():
+            task = self.task_queue.get()  # Récupérer une tâche
+            task()  # Exécuter la tâche dans le thread principal
+        # Replanifier la vérification de la file
+        self.after(100, self.process_queue)
+
     
     def extend_button(self, *args):
         print("extend_button")
@@ -78,27 +90,11 @@ class DofusGuideOverlay(Overlay):
         self.canvas.config(width=self.width, height=h)  # Mettre à jour les dimensions du Canvas
         self.canvas.coords(
             self.rect_bg,
-            self.get_rounded_rectangle_coords(0, 0, self.width, h, 23)
+            get_rounded_rectangle_coords(0, 0, self.width, h, 23)
         )
         pass
     
-    def get_rounded_rectangle_coords(self, x1, y1, x2, y2, radius):
-        """Retourne les points pour ajuster un rectangle arrondi."""
-        points = [
-            (x1 + radius, y1),
-            (x2 - radius, y1),
-            (x2, y1),
-            (x2, y1 + radius),
-            (x2, y2 - radius),
-            (x2, y2),
-            (x2 - radius, y2),
-            (x1 + radius, y2),
-            (x1, y2),
-            (x1, y2 - radius),
-            (x1, y1 + radius),
-            (x1, y1),
-        ]
-        return [coord for point in points for coord in point]  # Aplatir les tuples
+
 
     
         
@@ -195,7 +191,7 @@ class DofusGuideOverlay(Overlay):
         path = self.config_json['img']['path2']+get_image_path(type=dofus.type, 
                                                                 classe=dofus.classe, sexe=dofus.sexe, head=dofus.head)
 
-        img = ImageTk.PhotoImage(Image.open(path).resize((self.head_width, self.head_width), Image.LANCZOS))
+        img = load_image(path, (self.head_width, self.head_width))
         
         label_avatar = tk.Label(self, image=img, bg=self.background_color)
         
@@ -237,10 +233,11 @@ class DofusGuideOverlay(Overlay):
 
     def drag(self, event, dofus):
         """Déplace l'image en cours de drag."""
-        if self.is_valid_drop_zone(event.x, event.y):
-            self.perso[dofus].config(cursor="hand2")  # Zone valide
-        else:
-            self.perso[dofus].config(cursor="no")  # Zone non valide
+        if self.drag_image is not None:
+            if self.is_valid_drop_zone(event.x, event.y):
+                self.perso[dofus].config(cursor="hand2")  # Zone valide
+            else:
+                self.perso[dofus].config(cursor="no")  # Zone non valide
 
     def stop_drag(self, event):
         """Stoppe le drag et réorganise les images."""
@@ -285,8 +282,18 @@ class DofusGuideOverlay(Overlay):
     
     def open_reorganize(self, order):
         self.order = order
-        if not(self.reorganise) and self.dh:
-            self.reorganise = Reorganiser(self.order, self, self.dh)
+        
+        if self.dh:
+            if not(self.reorganise):
+                self.reorganise = Reorganiser(self.order, self, self.dh)
+            else:
+                self.reorganise.actualise()
+                self.reorganise.deiconify()
+        else:
+            print("reorganise already open")
+            
+    def ask_open_reorganize(self, order):
+        self.task_queue.put(lambda order=order: self.open_reorganize(order))
     
     def select_char(self, dofus):
         dofus.selected = not dofus.selected
@@ -302,6 +309,20 @@ class DofusGuideOverlay(Overlay):
     def select(self, indice):
         if self.open_dofus_methode:
             self.open_dofus_methode(indice)
+            
+    def open_button_image(self, canvas, x, y, path, size, **kwargs):
+        img = load_image(path, size)
+        # button = canvas.create_image(x, y, image=img)
+        
+        label_avatar = tk.Label(self, image=img, bg=self.background_color)
+        
+        canvas.create_window(
+            (x, y), window=label_avatar
+        )
+        
+        self.bouton_img = img
+        
+        return label_avatar
     
 
 
@@ -336,38 +357,29 @@ def load_image(path, size):
     img = img.resize(size, Image.LANCZOS)
     return ImageTk.PhotoImage(img)
 
-
-def draw_rounded_button(canvas, cx, cy, radius, text, font=("Arial", 12, "bold"), color="white", **kwargs):
-    """
-    Dessine un bouton rond avec du texte à l'intérieur sur un Canvas.
-
-    :param canvas: Instance de Canvas où dessiner le bouton.
-    :param cx: Coordonnée X du centre du cercle.
-    :param cy: Coordonnée Y du centre du cercle.
-    :param radius: Rayon du cercle.
-    :param text: Texte à afficher au centre du bouton.
-    :param font: Police utilisée pour le texte.
-    :param kwargs: Autres arguments pour personnaliser l'apparence (e.g., fill, outline).
-    """
-    # Dessiner le cercle
-    button = canvas.create_oval(
-        cx - radius, cy - radius, cx + radius, cy + radius, **kwargs
-    )
-    
-    # Ajouter le texte au centre du cercle
-    txt_button = canvas.create_text(cx, cy, text=text, fill=color, font=font)
-    
-    return button, txt_button
+def get_rounded_rectangle_coords(x1, y1, x2, y2, radius):
+    """Retourne les points pour ajuster un rectangle arrondi."""
+    points = [
+        (x1 + radius, y1),
+        (x2 - radius, y1),
+        (x2, y1),
+        (x2, y1 + radius),
+        (x2, y2 - radius),
+        (x2, y2),
+        (x2 - radius, y2),
+        (x1 + radius, y2),
+        (x1, y2),
+        (x1, y2 - radius),
+        (x1, y1 + radius),
+        (x1, y1),
+    ]
+    return [coord for point in points for coord in point]  # Aplatir les tuples
 
 def dessiner_chevron(canvas, x, y):
     """Dessine un chevron `<` sur un Canvas."""
     return canvas.create_text(x, y, text="<", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
 
 
-def get_head_number(classe):
-    if classe in dict_head:
-        return str(dict_head[classe])
-    return "10"
 
 def get_image_path(type="head", classe="iop", sexe=0, head=1):
     prefixes_dict = {"head":"heads/", "icon":"icons/", "symbol":"symbols/symbol_", "head_char":"head_char/mini_",
