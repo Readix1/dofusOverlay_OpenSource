@@ -6,7 +6,7 @@
     "keyboard_bindings": {
         "stop": "f12",
         "next_win": "tab",
-        "prev_win": "shift+A",
+        "prev_win": "shift+tab",
         "next_turn": "f1",
         "focus_dofus": "f13",
         "reorganizer": "f11",

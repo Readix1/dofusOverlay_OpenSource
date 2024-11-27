@@ -82,15 +82,17 @@ class DofusManager(Observer):
         self.config["keyboard_bindings"][shortcut_name] = shortcut
         
     def save_config(self):
-        
         with open("ressources/config.json", 'r') as file:
             temp_config = json.load(file)
             
         temp_config["keyboard_bindings"]['prev_win'] = self.config["keyboard_bindings"]['prev_win']
-        temp_config["keyboard_bindings"]['next_turn'] = self.config["keyboard_bindings"]['next_turn']
+        temp_config["keyboard_bindings"]['next_win'] = self.config["keyboard_bindings"]['next_win']
         
         with open("ressources/config.json", 'w') as file:
             json.dump(temp_config, file, indent=4)
+            
+    def get_shortcut(self, ):
+        return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win']
 
     def is_pressed(self, key_name, shortcut):
         if key_name == shortcut and self.current==0:

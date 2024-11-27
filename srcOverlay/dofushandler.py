@@ -20,7 +20,7 @@ class DofusHandler(Thread,Observer):
     """
     def __init__(self):
         Thread.__init__(self)
-        Observer.__init__(self,["update_order", "getHwnd", "reorganise", "update_shortcut", "save_button",
+        Observer.__init__(self,["update_order", "getHwnd", "reorganise", "update_shortcut", "save_button", "get_shortcut",
                                 "update_shown_page", "update_visible", "stop"])  
         self.running = True
         
@@ -36,6 +36,9 @@ class DofusHandler(Thread,Observer):
         
     def update_shortcut(self, shortcut_name, shortcut):
         self.notify("update_shortcut", shortcut_name, shortcut)
+        
+    def get_shortcut(self):
+        return self.notify("get_shortcut")
         
     def open_reorganize(self):
         self.notify("reorganise", self.dofus)

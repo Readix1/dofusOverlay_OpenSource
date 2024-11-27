@@ -84,19 +84,31 @@ class Reorganiser(CTkToplevel):
         
         self.previous_button = CTkButton(raccourci_frame, text="Précédent", command=self.update_previous_shortcut, image=self.previous)
         self.previous_button.grid(row=0, column=0, padx=(20, 5), pady=10)
-        self.previous_shortcut = ""
+        
         
         self.next_button = CTkButton(raccourci_frame, text="Suivant", command=self.update_next_shortcut, image=self.next, compound="right")
         self.next_button.grid(row=0, column=1,  pady=10, padx=(0, 10))
-        self.next_shortcut = ""
+
+        shortcuts = self.dh.get_shortcut()
         
+        self.update_previous_button(shortcuts[0])
+        self.update_next_button(shortcuts[1])
         
+                
         self.create_table()
         
         # Window drag
         self.bind('<Button-1>', self.clickwin)
         self.bind('<B1-Motion>', self.dragwin)
         self.bind('<ButtonRelease-1>', self.release_dragwin)
+        
+    def update_previous_button(self, shortcut):
+        self.previous_shortcut = shortcut
+        self.previous_button.configure(text=shortcut)
+        
+    def update_next_button(self, shortcut):
+        self.next_shortcut = shortcut
+        self.next_button.configure(text=shortcut)
         
     def update_previous_shortcut(self):
         self.previous_button.configure(text="")
@@ -170,6 +182,11 @@ class Reorganiser(CTkToplevel):
         self.pages_dofus = sorted(self.dh.dofus, key=lambda x: x.ini, reverse=True)
         self.create_rows()
         self.update_ini()
+        shortcuts = self.dh.get_shortcut()
+        
+        self.update_previous_button(shortcuts[0])
+        self.update_next_button(shortcuts[1])
+        
         
     def create_rows(self):
         for widget in self.row_widgets:
