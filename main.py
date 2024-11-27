@@ -30,20 +30,21 @@ with open("ressources/config.json",encoding="utf-8") as file:
     config = json.load(file)
 
 dh = DofusHandler()
-if config["overlay"]["auto-actualise"]:
+if config["overlay"]["auto-actualisation"]:
     dh.start()
 dm = DofusManager(config,dh)
 
-if config["overlay"]["actif"]:
+if config["overlay"]["afficher_overlay"]:
     interface = DofusGuideOverlay(config, dh.dofus, dh.open_index_dofus, dh=dh)
-    if config["overlay"]["auto-actualise"]:
+    if config["overlay"]["auto-actualisation"]:
         Listener(dh).start()
     # ThreadListener(interface)
 
     dh.add_observer("reorganise", lambda dofus: interface.open_reorganize(dofus))
     dh.add_observer("stop",interface.stop)
     dh.add_observer("update_shown_page",lambda indice: interface.update_perso(indice))
-    dh.add_observer("update_visible",lambda hwnd: interface.update_visibility(hwnd))
+    if config["overlay"]["auto-disparition"]:
+        dh.add_observer("update_visible",lambda hwnd: interface.update_visibility(hwnd))
     dh.add_observer("update_order",lambda order : interface.update_order(order))
     dh.add_observer('getHwnd',lambda : interface.getHwnd())
     

@@ -18,8 +18,9 @@
     {
         "posx" : 0,
         "posy" : 0,
-        "actif":1,
-        "auto-actualise":1,
+        "afficher_overlay":1,
+        "auto-actualisation":1,
+        "auto-disparition":0,
         "opacity":0.8
     }
 }
