@@ -1,59 +1,44 @@
 {
     "Tc-hupper": {
         "classe": "huppermage",
-        "sexe": "male",
         "ini": 1,
-        "type": "head",
-        "head": "1"
+        "image_path": "ressources\\img_overlay\\heads/170_1.png"
     },
     "Tc-fecaa": {
         "classe": "feca",
-        "sexe": "femelle",
         "ini": 1,
-        "type": "head",
-        "head": "1"
+        "image_path": "ressources\\img_overlay\\heads/11_1.png"
     },
     "Reedix": {
         "classe": "eliotrope",
-        "sexe": "femelle",
         "ini": 0,
-        "type": "head",
-        "head": "1"
+        "image_path": "ressources\\img_overlay\\heads/160_1.png"
     },
     "Tc-arc": {
         "classe": "cra",
-        "sexe": "male",
         "ini": 2,
-        "type": "head",
-        "head": "1"
+        "image_path": "ressources\\img_overlay\\heads/90_1.png"
     },
     "Indimo": {
         "classe": "iop",
-        "sexe": "male",
-        "ini": 3
+        "ini": 3,
+        "image_path": "ressources\\img_overlay\\heads/80_1.png"
     },
     "Divahle": {
         "classe": "Feca",
-        "sexe": "femelle",
         "ini": 6
     },
     "Chamontorm": {
         "classe": "sacrieur",
-        "sexe": "femelle",
         "ini": 6
     },
     "Tonnedeplumes": {
         "classe": "",
-        "sexe": "male",
-        "ini": 0,
-        "type": "head",
-        "head": "1"
+        "ini": 0
     },
     "Holexand": {
         "classe": "",
-        "sexe": "male",
         "ini": 0,
-        "type": "head",
-        "head": "1"
+        "image_path": "ressources\\img_overlay\\heads/120_1.png"
     }
 }

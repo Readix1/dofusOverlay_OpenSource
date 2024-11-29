@@ -171,9 +171,12 @@ class DofusGuideOverlay(Overlay):
             self.resize()
         
     def create_image(self, dofus, indice):
-        path = self.config_json['img']['path2']+get_image_path(type=dofus.type, 
-                                                                classe=dofus.classe, sexe=dofus.sexe, head=dofus.head)
-
+        if dofus.image_path:
+            path = dofus.image_path
+        else:
+            path = self.config_json['img']['path2']+get_image_path(classe=dofus.classe)
+            dofus.image_path = path
+            
         img = load_image(path, (self.head_width, self.head_width))
         
         label_avatar = tk.Label(self, image=img, bg=self.background_color)
@@ -216,11 +219,11 @@ class DofusGuideOverlay(Overlay):
 
     def drag(self, event, dofus):
         """Déplace l'image en cours de drag."""
-        if self.drag_image is not None:
-            if self.is_valid_drop_zone(event.x, event.y):
-                self.perso[dofus].config(cursor="hand2")  # Zone valide
-            else:
-                self.perso[dofus].config(cursor="no")  # Zone non valide
+        # if self.drag_image is not None:
+        if self.is_valid_drop_zone(event.x, event.y):
+            self.perso[dofus].config(cursor="hand2")  # Zone valide
+        else:
+            self.perso[dofus].config(cursor="no")  # Zone non valide
 
     def stop_drag(self, event):
         """Stoppe le drag et réorganise les images."""
@@ -368,42 +371,46 @@ def dessiner_chevron(canvas, x, y):
     """Dessine un chevron `<` sur un Canvas."""
     return canvas.create_text(x, y, text="<", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
 
+def get_image_path(classe="iop"):
+    if classe in dict_head:
+        return f"heads/{dict_head[classe]}_1.png"
+    return "icons/1004.png"
+    
 
-
-def get_image_path(type="head", classe="iop", sexe=0, head=1):
-    prefixes_dict = {"head":"heads/", "icon":"icons/", "symbol":"symbols/symbol_", "head_char":"head_char/mini_",
-               "char":"char/", "compagnon_char":"compagnon/big_", "compagnon":"compagnon/square_"}
+# def get_image_path(type="head", classe="iop", sexe=0, head=1):
+#     prefixes_dict = {"head":"heads/", "icon":"icons/", "symbol":"symbols/symbol_", "head_char":"head_char/mini_",
+#                "char":"char/", "compagnon_char":"compagnon/big_", "compagnon":"compagnon/square_"}
     
-    gender = 1 if sexe=="femelle" else 0
-    classe = classe.lower()
+#     gender = 1 if sexe=="femelle" else 0
+#     classe = classe.lower()
     
-    prefix=""
-    sufix=""
-    if type in prefixes_dict:
-        prefix += prefixes_dict[type]
+#     prefix=""
+#     sufix=""
+#     if type in prefixes_dict:
+#         prefix += prefixes_dict[type]
     
-    if type=="head":
-        if classe in dict_head:
-            sufix = str(dict_head[classe]+gender)+"_"+str(head)+".png"
+#     if type=="head":
+#         if classe in dict_head:
+#             sufix = str(dict_head[classe]+gender)+"_"+str(head)+".png"
             
-    elif type=="icon":
-        if classe in dict_head:
-            sufix = str(dict_head[classe])+".png"
+#     elif type=="icon":
+#         if classe in dict_head:
+#             sufix = str(dict_head[classe])+".png"
     
-    elif type=="symbol":
-        sufix = str(int(dict_head[classe]/10))+".png"
+#     elif type=="symbol":
+#         sufix = str(int(dict_head[classe]/10))+".png"
         
-    elif type=="head_char" or type=="char":
-        sufix = f"{int(dict_head[classe]/10)}_{gender}.png"
+#     elif type=="head_char" or type=="char":
+#         sufix = f"{int(dict_head[classe]/10)}_{gender}.png"
         
-    elif type=="compagnon_char" or type=="compagnon":
-        sufix = f"{head}." + ("png" if type=="compagnon" else "jpg")
+#     elif type=="compagnon_char" or type=="compagnon":
+#         sufix = f"{head}." + ("png" if type=="compagnon" else "jpg")
             
-    if not sufix:
-        prefix=""
-        sufix="icons/1004.png"
+#     if not sufix:
+#         prefix=""
+#         sufix="icons/1004.png"
     
-    return prefix + sufix
+#     return prefix + sufix
     
 
 if __name__ == "__main__":

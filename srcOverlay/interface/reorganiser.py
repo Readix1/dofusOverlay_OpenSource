@@ -1,7 +1,10 @@
-from tkinter import IntVar, StringVar
+from tkinter import IntVar, StringVar, Frame
 from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox, CTkFont
 
 from pynput import keyboard
+
+from PIL import Image, ImageTk
+from customtkinter import CTkImage
 
 class Reorganiser(CTkToplevel):
     def __init__(self, pages_dofus, overlay, dh):
@@ -223,8 +226,8 @@ class Reorganiser(CTkToplevel):
         header_frame = CTkFrame(self.personnage_frame)
         # header_frame.pack(fill="x", padx=5, pady=5)
         header_frame.grid(padx=5, pady=5, row=0, column=0, sticky="nsew")
-        headers = ["", "Personnage", "Classe", "Sexe", "Initiative", "Actif"]
-        column_widths = [20, 150, 120, 80, 60, 40]
+        headers = ["", "Personnage", "Classe", "Raccourci", "Initiative", "Actif"]
+        column_widths = [20, 200, 35, 120, 60, 40]
         for i, (header, width) in enumerate(zip(headers, column_widths)):
             label = CTkLabel(header_frame, text=header, width=width, font=("Arial", 12, "underline"),)
             label.grid(row=0, column=i, padx=5, sticky="w")
@@ -246,23 +249,25 @@ class Reorganiser(CTkToplevel):
         move_button.bind('<ButtonRelease-1>', self.stop_row_drag)
 
         # Personnage label
-        personnage_label = CTkLabel(row_frame, text=dofus.name, width=150)
+        personnage_label = CTkLabel(row_frame, text=dofus.name, width=200)
         personnage_label.pack(side="left", padx=5)
+        
+        # Image label
+        
+        image_path = dofus.image_path if dofus.image_path else "ressources\\img_overlay\\"+get_image_path(dofus.classe)
+        
+        image = load_image(image_path, (30, 30))
+        image_label = CTkLabel(row_frame, image=image, width=35, text="")
+        image_label.image = image  # Référence pour éviter suppression
+        image_label.pack(side="left", padx=5)
+        
+        image_label.bind("<Button-1>", lambda event, dofus=dofus, image_label=image_label: self.open_image_selector(dofus, image_label))
 
-        # Classe combo box
-        class_var = StringVar(value=dofus.classe)
-        self.class_dict[dofus] = class_var
-        class_combobox = CTkComboBox(row_frame, variable=class_var, width=120,
-                                    values= sorted([name.capitalize() for name in ["sacrieur", "cra", "iop", "ecaflip", "eliotrope", "eniripsa", 
-                                                "enutrof", "feca", "huppermage", "osamodas", "pandawa", "roublard", 
-                                                "sadida", "sram", "steamer", "xelor", "zobal", "ouginak", "forgelance"]]))
-        class_combobox.pack(side="left", padx=5)
-
-        # Sexe combo box
-        gender_var = StringVar(value=dofus.sexe)
-        self.gender_dict[dofus] = gender_var
-        gender_combobox = CTkComboBox(row_frame, variable=gender_var, values=["male", "femelle"], width=80)
-        gender_combobox.pack(side="left", padx=5)
+        
+        # Raccourci label
+        shortcut_var = StringVar(value=dofus.name)
+        shortcut_label = CTkLabel(row_frame, text=shortcut_var.get(), width=120)
+        shortcut_label.pack(side="left", padx=5)
 
         # Initiative entry
         ini_var = StringVar(value=dofus.ini)
@@ -279,6 +284,106 @@ class Reorganiser(CTkToplevel):
         active_checkbox.pack(anchor="nw", expand=True, padx=10, pady=10)
 
         self.row_widgets.append(row_frame)
+    
+    def open_image_selector(self, dofus, image_label):
+        """Ouvre une nouvelle fenêtre pour sélectionner une image."""
+        selector_window = CTkToplevel(self)
+        selector_window.title("Sélection d'image")
+        # selector_window.geometry("600x200")  # Taille ajustée pour inclure le padding
+        selector_window.attributes('-topmost', True)  # Toujours au premier plan
+
+        # Bloque les interactions avec d'autres fenêtres tant que celle-ci est ouverte
+        selector_window.grab_set()
+        selector_window.focus_force()
+
+        def on_focus_out(event):
+            if not selector_window.focus_get():  # Vérifie si la fenêtre a perdu le focus
+                selector_window.destroy()
+
+        selector_window.bind("<FocusOut>", on_focus_out)  # Lier l'événement
+        
+        background_color = selector_window.cget("bg")
+
+        # Ajout d'une frame avec padding
+        frame = Frame(selector_window, bg=background_color)
+        frame.grid(padx=15, pady=15)  # Espacement autour de la frame
+
+        max_columns = 5  # Nombre de colonnes
+        images_per_column = 4  # Nombre de groupes par colonne
+        current_row = 0
+        current_column = 0
+
+        for idx, i in enumerate(list(range(1, 19)) + [20]):
+            # Chargement des images
+            male_path = "ressources\\img_overlay\\" + f"heads/{i}0_1.png"
+            female_path = "ressources\\img_overlay\\" + f"heads/{i}1_1.png"
+            icon_path = "ressources\\img_overlay\\" + f"icons/{i}0.png"
+            
+            
+            image_male = load_image(male_path, (30, 30))
+            image_female = load_image(female_path, (30, 30))
+            image_icon = load_image(icon_path, (30, 30))
+
+            # Création et positionnement des labels pour icône, mâle et femelle
+            label_icon = CTkLabel(frame, image=image_icon, text="", compound="top")
+            label_icon.image = image_icon  # Référence pour éviter suppression
+            
+            padx = (0, 6) if current_column == 0 else (26, 6)
+            label_icon.grid(column=current_column * 3, row=current_row, pady=5, padx=padx)
+
+            label_male = CTkLabel(frame, image=image_male, text="", compound="top")
+            label_male.image = image_male
+            label_male.grid(column=current_column * 3 + 1, row=current_row, pady=5, padx=(3, 3))
+
+            label_female = CTkLabel(frame, image=image_female, text="", compound="top")
+            label_female.image = image_female
+            label_female.grid(column=current_column * 3 + 2, row=current_row, pady=5, padx=(3, 3))
+
+            # Ajout d'une action au clic sur l'image mâle
+            label_male.bind(
+                "<Button-1>",
+                lambda event, img_path=male_path: self.update_character_image(dofus, img_path, selector_window, image_label),
+            )
+            
+            label_female.bind(
+                "<Button-1>",
+                lambda event, img_path=female_path: self.update_character_image(dofus, img_path, selector_window, image_label),
+            )
+            
+            label_icon.bind(
+                "<Button-1>",
+                lambda event, img_path=icon_path: self.update_character_image(dofus, img_path, selector_window, image_label),
+            )
+
+            # Gérer le changement de colonne et de ligne
+            current_row += 1
+            if current_row >= images_per_column:
+                current_row = 0
+                current_column += 1
+
+                # Arrête si le nombre maximum de colonnes est atteint
+                if current_column >= max_columns:
+                    break
+                
+            # Ajouter une séparation de 15 unités entre les colonnes
+            if current_column > 0:
+                frame.grid_columnconfigure(current_column, minsize=15)
+
+
+
+    def update_character_image(self, dofus, image_path, window, image_label):
+        """Met à jour l'image d'un personnage dans l'interface principale."""
+        # Charger la nouvelle image
+        dofus.image_path = image_path
+        new_image = load_image(image_path, (30, 30))
+
+        # Mettre à jour le bouton dans l'interface principale
+        button = image_label
+        button.configure(image=new_image)
+        button.image = new_image  # Référence pour éviter suppression
+
+        # Ferme la fenêtre de sélection
+        window.destroy()
 
     def perform_row_drag(self, event):
         if self.dragging_row is None:
@@ -348,22 +453,16 @@ class Reorganiser(CTkToplevel):
             self.destroy()
         
     def reduce(self):
-        # if self.overlay:
-        #     self.overlay.reorganise = None
         self.withdraw()
     
     def enter(self):
         for dofus in self.pages_dofus:
             dofus.ini = int(self.ini_dict[dofus].get())
-            dofus.classe = self.class_dict[dofus].get()
-            dofus.sexe = self.gender_dict[dofus].get()
             dofus.selected = self.check_dict[dofus].get()
             
             if self.overlay:
                 self.overlay.ask_update_selected_status(dofus)
             
-        # if self.overlay:
-        #     self.overlay.reorganise = None
             
         if self.dh:
             self.dh.update_order()
@@ -381,15 +480,24 @@ class Reorganiser(CTkToplevel):
             self.dh.load_dofus_info()
             self.create_rows()
             
-from PIL import Image, ImageTk
-from customtkinter import CTkImage
+
             
 def load_image(path, size, rotate=False):
     img = Image.open(path)
     img = img.resize(size, Image.LANCZOS)
     if rotate:
         img = img.rotate(180)  # Rotation de 180 degrés
-    return CTkImage(img)
+    return CTkImage(img, size=size)
+
+dict_head = {"feca":10, "osamodas":20, "enutrof":30, "sram":40, "xelor":50, "ecaflip":60, "eniripsa":70, 
+             "iop":80, "cra":90, "sadida":100, "sacrieur":110, "pandawa":120, "roublard":130, "zobal":140, 
+             "steamer":150, "eliotrope":160, "huppermage":170, "ouginak":180, "forgelance":200}
+
+
+def get_image_path(classe="iop"):
+    if classe in dict_head:
+        return f"heads/{dict_head[classe]}_1.png"
+    return "icons/1004.png"
 
 if __name__ == "__main__":
     import sys
@@ -398,6 +506,7 @@ if __name__ == "__main__":
     
     pages_dofus = [Page_Dofus(1, ini=1), Page_Dofus(0, ini=2), Page_Dofus(4, ini=4)]
     pages_dofus[0].name = "test1"
+    pages_dofus[1].classe = "feca"
     pages_dofus[1].name = "Indimo"
     pages_dofus[2].name = "Readix"
     ihm = Reorganiser(pages_dofus, None, None)

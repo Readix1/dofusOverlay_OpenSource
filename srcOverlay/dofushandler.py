@@ -102,12 +102,13 @@ class DofusHandler(Thread,Observer):
         return self.get_hwnds().index(hwnd)       
     
     def update_order(self):
-        current_dofus = self.dofus[self.current_shown]
-        # self.dofus=sorted(self.dofus, key=lambda x: x.ini, reverse=True)
-        self.dofus.sort(key=lambda x: x.ini, reverse=True)
-        self.current_shown = self.dofus.index(current_dofus)
+        if self.dofus:
+            current_dofus = self.dofus[self.current_shown]
+            # self.dofus=sorted(self.dofus, key=lambda x: x.ini, reverse=True)
+            self.dofus.sort(key=lambda x: x.ini, reverse=True)
+            self.current_shown = self.dofus.index(current_dofus)
+            self.notify("update_shown_page", self.current_shown)
         self.notify("update_order", self.dofus)
-        self.notify("update_shown_page", self.current_shown)
         
     def get_names(self):
         return [d.name for d in self.dofus]

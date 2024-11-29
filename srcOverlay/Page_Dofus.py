@@ -17,9 +17,7 @@ class Page_Dofus():
         
         self.name=""
         self.classe=""
-        self.sexe="male"
-        self.type="head"
-        self.head="1"
+        self.image_path = ""
         self.ini = ini
         
         self.selected = True
@@ -30,7 +28,7 @@ class Page_Dofus():
     def serialize(self):
         if self.name == "":
             return {}
-        return {self.name:{ "classe":self.classe, "sexe":self.sexe, "ini":self.ini, "type":self.type, "head":self.head}}
+        return {self.name:{ "classe":self.classe, "ini":self.ini, "image_path":self.image_path}}
     
     def get_info(self):
         if self.name == "":
@@ -44,6 +42,7 @@ class Page_Dofus():
             self.name = ""
             self.classe = ""
             self.ini = 0
+            self.image_path = ""
         else:
             self.name = lname[0]
             if len(lname)>1 and not any(char.isdigit() for char in lname[1]) and not any(char.isdigit() for char in lname[0]) and self.classe == "":
@@ -55,6 +54,7 @@ class Page_Dofus():
         tmp_classe = self.classe
         self.set_name()
         if tmp_name != self.name or (tmp_classe and tmp_classe != self.classe):
+            print("update_name")
             self.get_info()
         return tmp_name != self.name or tmp_classe != self.classe
     

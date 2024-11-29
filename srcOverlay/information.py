@@ -36,11 +36,18 @@ class Information:
     @classmethod   
     def getInfo(self, dofus):
         if dofus.name in self.information:
-            dofus.classe = self.information[dofus.name]["classe"]
-            dofus.sexe = self.information[dofus.name]["sexe"]
-            dofus.ini = int(self.information[dofus.name]["ini"])
-            dofus.type = self.information[dofus.name]["type"]
-            dofus.head = self.information[dofus.name]["head"]
+            if "classe" in self.information[dofus.name]:
+                dofus.classe = self.information[dofus.name]["classe"]
+            if "sexe" in self.information[dofus.name]:
+                dofus.sexe = self.information[dofus.name]["sexe"]
+            if "ini" in self.information[dofus.name]:
+                dofus.ini = int(self.information[dofus.name]["ini"])
+            if "type" in self.information[dofus.name]:
+                dofus.type = self.information[dofus.name]["type"]
+            if "head" in self.information[dofus.name]:
+                dofus.head = self.information[dofus.name]["head"]
+            if "image_path" in self.information[dofus.name]:
+                dofus.image_path = self.information[dofus.name]["image_path"]
             
 
     
