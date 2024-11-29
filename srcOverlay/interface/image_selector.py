@@ -1,9 +1,7 @@
-import tkinter as tk
-from customtkinter import CTkToplevel, CTkLabel, CTkButton, CTkFrame, CTkScrollableFrame
-from tkinter import StringVar, Frame
+from customtkinter import CTkToplevel, CTkLabel, CTkButton, CTkScrollableFrame, CTkImage
+from tkinter import Frame
 
-from PIL import Image, ImageTk
-from customtkinter import CTkImage
+from PIL import Image
 
 class ImageSelector:
     def __init__(self, parent, dofus, image_label):
@@ -86,7 +84,8 @@ class ImageSelector:
                 self.create_image_labels_additionnel(frame, image_female, icon_path, columns_group,  disposition="big")
         elif type == "icons":
             self.images_per_column_icons = 5 
-            
+            columns_group = [1, 5, 6]
+            columns_reset = [21]
             
             icons = [226, 227, 228, 218, 229, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 314, 315, 316, 317, 
                      401, 419, 404, 411, 422, 
@@ -95,9 +94,6 @@ class ImageSelector:
                      403, 406, 407, 408, 409, 410, 412, 413, 414, 415, 416, 417, 418, 420, 421, 423, 425, 426, 427, 
                      428, 429, 430, 433, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 449, 469, 900, 901, 902, 903, 
                      "phoenix"]
-            
-            columns_group = [1, 5, 6]
-            columns_reset = [21]
             
             for idx, icon in enumerate(icons):
                 # Chargement des images
@@ -109,6 +105,7 @@ class ImageSelector:
         
         elif type == "symbols":
             self.images_per_column_icons = 14
+            
             for idx, classe in enumerate(list(range(1, 19)) + [20]):
                 # Chargement des images
                 icon_path = f"ressources\\img_overlay\\symbols/symbol_{classe}.png"
