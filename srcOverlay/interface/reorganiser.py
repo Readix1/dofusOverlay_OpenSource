@@ -5,6 +5,7 @@ from pynput import keyboard
 
 from PIL import Image, ImageTk
 from customtkinter import CTkImage
+from srcOverlay.interface.image_selector import ImageSelector
 
 class Reorganiser(CTkToplevel):
     def __init__(self, pages_dofus, overlay, dh):
@@ -287,103 +288,10 @@ class Reorganiser(CTkToplevel):
     
     def open_image_selector(self, dofus, image_label):
         """Ouvre une nouvelle fenêtre pour sélectionner une image."""
-        selector_window = CTkToplevel(self)
-        selector_window.title("Sélection d'image")
-        # selector_window.geometry("600x200")  # Taille ajustée pour inclure le padding
-        selector_window.attributes('-topmost', True)  # Toujours au premier plan
-
-        # Bloque les interactions avec d'autres fenêtres tant que celle-ci est ouverte
-        selector_window.grab_set()
-        selector_window.focus_force()
-
-        def on_focus_out(event):
-            if not selector_window.focus_get():  # Vérifie si la fenêtre a perdu le focus
-                selector_window.destroy()
-
-        selector_window.bind("<FocusOut>", on_focus_out)  # Lier l'événement
-        
-        background_color = selector_window.cget("bg")
-
-        # Ajout d'une frame avec padding
-        frame = Frame(selector_window, bg=background_color)
-        frame.grid(padx=15, pady=15)  # Espacement autour de la frame
-
-        max_columns = 5  # Nombre de colonnes
-        images_per_column = 4  # Nombre de groupes par colonne
-        current_row = 0
-        current_column = 0
-
-        for idx, i in enumerate(list(range(1, 19)) + [20]):
-            # Chargement des images
-            male_path = "ressources\\img_overlay\\" + f"heads/{i}0_1.png"
-            female_path = "ressources\\img_overlay\\" + f"heads/{i}1_1.png"
-            icon_path = "ressources\\img_overlay\\" + f"icons/{i}0.png"
-            
-            
-            image_male = load_image(male_path, (30, 30))
-            image_female = load_image(female_path, (30, 30))
-            image_icon = load_image(icon_path, (30, 30))
-
-            # Création et positionnement des labels pour icône, mâle et femelle
-            label_icon = CTkLabel(frame, image=image_icon, text="", compound="top")
-            label_icon.image = image_icon  # Référence pour éviter suppression
-            
-            padx = (0, 6) if current_column == 0 else (26, 6)
-            label_icon.grid(column=current_column * 3, row=current_row, pady=5, padx=padx)
-
-            label_male = CTkLabel(frame, image=image_male, text="", compound="top")
-            label_male.image = image_male
-            label_male.grid(column=current_column * 3 + 1, row=current_row, pady=5, padx=(3, 3))
-
-            label_female = CTkLabel(frame, image=image_female, text="", compound="top")
-            label_female.image = image_female
-            label_female.grid(column=current_column * 3 + 2, row=current_row, pady=5, padx=(3, 3))
-
-            # Ajout d'une action au clic sur l'image mâle
-            label_male.bind(
-                "<Button-1>",
-                lambda event, img_path=male_path: self.update_character_image(dofus, img_path, selector_window, image_label),
-            )
-            
-            label_female.bind(
-                "<Button-1>",
-                lambda event, img_path=female_path: self.update_character_image(dofus, img_path, selector_window, image_label),
-            )
-            
-            label_icon.bind(
-                "<Button-1>",
-                lambda event, img_path=icon_path: self.update_character_image(dofus, img_path, selector_window, image_label),
-            )
-
-            # Gérer le changement de colonne et de ligne
-            current_row += 1
-            if current_row >= images_per_column:
-                current_row = 0
-                current_column += 1
-
-                # Arrête si le nombre maximum de colonnes est atteint
-                if current_column >= max_columns:
-                    break
-                
-            # Ajouter une séparation de 15 unités entre les colonnes
-            if current_column > 0:
-                frame.grid_columnconfigure(current_column, minsize=15)
+        print("open_image_selector")
+        ImageSelector(self, dofus, image_label)
 
 
-
-    def update_character_image(self, dofus, image_path, window, image_label):
-        """Met à jour l'image d'un personnage dans l'interface principale."""
-        # Charger la nouvelle image
-        dofus.image_path = image_path
-        new_image = load_image(image_path, (30, 30))
-
-        # Mettre à jour le bouton dans l'interface principale
-        button = image_label
-        button.configure(image=new_image)
-        button.image = new_image  # Référence pour éviter suppression
-
-        # Ferme la fenêtre de sélection
-        window.destroy()
 
     def perform_row_drag(self, event):
         if self.dragging_row is None:
