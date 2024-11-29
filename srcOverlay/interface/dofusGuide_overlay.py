@@ -372,8 +372,8 @@ def dessiner_chevron(canvas, x, y):
     return canvas.create_text(x, y, text="<", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
 
 def get_image_path(classe="iop"):
-    if classe in dict_head:
-        return f"heads/{dict_head[classe]}_1.png"
+    if classe.lower() in dict_head:
+        return f"heads/{dict_head[classe.lower()]}_1.png"
     return "icons/1004.png"
     
 

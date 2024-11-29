@@ -37,6 +37,7 @@ class Reorganiser(CTkToplevel):
         self.row_widgets = []
         self.previous_shortcut="Précédent"
         self.next_shortcut="Suivant"
+        self.shortcut_for_particular_page = {}
         
         self.principal_frame = CTkFrame(self)
         self.principal_frame.pack(padx=10, pady=10, expand=True, fill="both")
@@ -130,8 +131,6 @@ class Reorganiser(CTkToplevel):
 
         # Démarrer un listener pour écouter les touches du clavier
         self.start_update_shortcut_listener(self.previous_button, "previous_shortcut")
-        if self.dh and self.previous_shortcut:
-            self.dh.update_shortcut("prev_win", self.previous_shortcut)
             
     
     def update_next_shortcut(self):
@@ -139,10 +138,14 @@ class Reorganiser(CTkToplevel):
 
         # Démarrer un listener pour écouter les touches du clavier
         self.start_update_shortcut_listener(self.next_button, "next_shortcut")
-        if self.dh and self.next_shortcut:
-            self.dh.update_shortcut("next_win", self.next_shortcut)
+        
+    def update_specific_shortcut(self, button, shortcut_attr_name):
+        button.configure(text="")
+        
+        # Démarrer un listener pour écouter les touches du clavier
+        self.start_update_shortcut_listener(button, shortcut_attr_name, specific_page=True)
     
-    def start_update_shortcut_listener(self, button, shortcut_attr_name):
+    def start_update_shortcut_listener(self, button, shortcut_attr_name, specific_page=False):
         def on_press(key):
             try:
                 key_name = ""
@@ -160,7 +163,16 @@ class Reorganiser(CTkToplevel):
                 elif "ctrl"in key_name:
                     self.current=2
                 elif key_name == "esc":
-                    button.configure(text=getattr(self, shortcut_attr_name))
+                    if specific_page==False:
+                        button.configure(text=getattr(self, shortcut_attr_name))
+                    else:
+                        for dofus in self.pages_dofus:
+                            if dofus.name == shortcut_attr_name:
+                                dofus.shortcut = ""
+                                break
+                        button.configure(text="Aucun")
+                        if self.dh:
+                            self.dh.update_shortcut(shortcut_attr_name, "", specific_page)
                     self.current=0
                     return False
                 else:
@@ -171,13 +183,23 @@ class Reorganiser(CTkToplevel):
                         prefix+="ctrl+"
                         
                     shortcut_name = prefix+str(key_name)
-                    setattr(self, shortcut_attr_name, shortcut_name)
-                    button.configure(text=shortcut_name)
-                    if self.dh:
-                        if shortcut_name and "next" in shortcut_attr_name:
-                            self.dh.update_shortcut("next_win", shortcut_name)
-                        else:
-                            self.dh.update_shortcut("prev_win", shortcut_name)
+                    
+                    if specific_page==False:
+                        setattr(self, shortcut_attr_name, shortcut_name)
+                        button.configure(text=shortcut_name)
+                        if self.dh:
+                            if shortcut_name and "next" in shortcut_attr_name:
+                                self.dh.update_shortcut("next_win", shortcut_name)
+                            else:
+                                self.dh.update_shortcut("prev_win", shortcut_name)
+                    else:
+                        for dofus in self.pages_dofus:
+                            if dofus.name == shortcut_attr_name:
+                                dofus.shortcut = shortcut_name
+                                break
+                        button.configure(text=shortcut_name)
+                        if self.dh:
+                            self.dh.update_shortcut(shortcut_attr_name, shortcut_name, specific_page)
                     
                     self.current=0
                     return False
@@ -269,9 +291,11 @@ class Reorganiser(CTkToplevel):
 
         
         # Raccourci label
-        shortcut_var = StringVar(value=dofus.name)
+        shortcut_var = StringVar(value="Aucun" if dofus.shortcut == "" else dofus.shortcut)
         shortcut_label = CTkLabel(row_frame, text=shortcut_var.get(), width=120)
         shortcut_label.pack(side="left", padx=5)
+
+        shortcut_label.bind("<Button-1>", lambda event, dofus=dofus, shortcut_label=shortcut_label: self.update_specific_shortcut(shortcut_label, dofus.name))
 
         # Initiative entry
         ini_var = StringVar(value=dofus.ini)

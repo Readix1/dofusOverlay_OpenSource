@@ -34,8 +34,8 @@ class DofusHandler(Thread,Observer):
         
         self.actualise()
         
-    def update_shortcut(self, shortcut_name, shortcut):
-        self.notify("update_shortcut", shortcut_name, shortcut)
+    def update_shortcut(self, shortcut_name, shortcut, specific=False):
+        self.notify("update_shortcut", shortcut_name, shortcut, specific)
         
     def get_shortcut(self):
         return self.notify("get_shortcut")
@@ -62,6 +62,12 @@ class DofusHandler(Thread,Observer):
         
     def get_selected_pages(self):
         return [i for i, d in enumerate(self.dofus) if d.selected]
+    
+    def open_specific_page(self, name):
+        for i, d in enumerate(self.dofus):
+            if d.name == name:
+                self.open_index_dofus(i)
+                return
 
     def open_next_page(self):
         selected = self.get_selected_pages()
@@ -103,7 +109,7 @@ class DofusHandler(Thread,Observer):
     
     def update_order(self):
         if self.dofus:
-            current_dofus = self.dofus[self.current_shown]
+            current_dofus = self.dofus[self.current_shown] if self.current_shown < len(self.dofus) else self.dofus[-1]
             # self.dofus=sorted(self.dofus, key=lambda x: x.ini, reverse=True)
             self.dofus.sort(key=lambda x: x.ini, reverse=True)
             self.current_shown = self.dofus.index(current_dofus)

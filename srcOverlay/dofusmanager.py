@@ -34,6 +34,8 @@ class DofusManager(Observer):
             on_click=self.on_click)
         self.listener.start()
         
+        self.shortcut_for_particular_page = {}
+        
     def on_press(self,key):
         try:
             if '_name_' not in key.__dict__:
@@ -76,10 +78,19 @@ class DofusManager(Observer):
             self.dofus_handler.open_reorganize()
         elif self.is_pressed(key_name, self.config["keyboard_bindings"]['actualise']):
             self.dofus_handler.actualise()
+        else:
+            for name, shortcut in self.shortcut_for_particular_page.items():
+                if self.is_pressed(key_name, shortcut):
+                    self.dofus_handler.open_specific_page(name)
+                    break
+        
         return self.running
     
-    def update_shortcut(self, shortcut_name, shortcut):
-        self.config["keyboard_bindings"][shortcut_name] = shortcut
+    def update_shortcut(self, shortcut_name, shortcut, specific_page=False):
+        if specific_page==False:
+            self.config["keyboard_bindings"][shortcut_name] = shortcut
+        else:
+            self.shortcut_for_particular_page[shortcut_name] = shortcut
         
     def save_config(self):
         with open("ressources/config.json", 'r') as file:

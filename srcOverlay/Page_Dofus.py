@@ -18,6 +18,7 @@ class Page_Dofus():
         self.name=""
         self.classe=""
         self.image_path = ""
+        self.shortcut = ""
         self.ini = ini
         
         self.selected = True
@@ -28,7 +29,12 @@ class Page_Dofus():
     def serialize(self):
         if self.name == "":
             return {}
-        return {self.name:{ "classe":self.classe, "ini":self.ini, "image_path":self.image_path}}
+        
+        dict_res = {"classe":self.classe, "ini":self.ini, "image_path":self.image_path}
+        if self.shortcut != "":
+            dict_res.update({"shortcut":self.shortcut})
+        
+        return {self.name:dict_res}
     
     def get_info(self):
         if self.name == "":

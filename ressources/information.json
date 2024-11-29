@@ -2,7 +2,8 @@
     "Tc-hupper": {
         "classe": "huppermage",
         "ini": 1,
-        "image_path": "ressources\\img_overlay\\heads/170_1.png"
+        "image_path": "ressources\\img_overlay\\heads/170_1.png",
+        "shortcut": "ctrl+a"
     },
     "Tc-fecaa": {
         "classe": "feca",

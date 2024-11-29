@@ -41,7 +41,7 @@ if config["overlay"]["afficher_overlay"]:
     # ThreadListener(interface)
 
     dh.add_observer("reorganise", lambda dofus: interface.ask_open_reorganize(dofus))
-    dh.add_observer("update_shortcut", lambda shortcut_name, shortcut: dm.update_shortcut(shortcut_name, shortcut))
+    dh.add_observer("update_shortcut", lambda shortcut_name, shortcut, specific: dm.update_shortcut(shortcut_name, shortcut, specific))
     dh.add_observer("get_shortcut", lambda : dm.get_shortcut())
     
     
