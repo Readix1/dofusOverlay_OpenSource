@@ -3,6 +3,8 @@ from tkinter import Frame
 
 from PIL import Image
 
+import time
+
 class ImageSelector:
     def __init__(self, parent, dofus, image_label, resizable=True):
         self.parent = parent
@@ -25,6 +27,8 @@ class ImageSelector:
         # Ajouter une frame principale avec padding
         self.frame = Frame(self.selector_window, bg=self.background_color)
         self.frame.grid(padx=15, pady=15)
+
+        self.clicked = False
 
         self.max_columns = 5  # Nombre de colonnes
         self.images_per_column = 4  # Nombre de groupes par colonne
@@ -141,9 +145,10 @@ class ImageSelector:
         padx = (26, 6) if self.current_column+self.big_column*self.images_per_row_icons in columns_group else (0, 6)
         label_icon.grid(column=self.current_column+self.big_column*self.images_per_row_icons, row=self.current_row, pady=5, padx=padx)
 
+        label_icon.bind("<Button-1>", self.start_mouse_capture)
         label_icon.bind(
             "<ButtonRelease-1>",
-            lambda event, img_path=icon_path: self.update_character_image(img_path),
+            lambda event, img_path=icon_path: self.update_character_image(event, img_path),
         )
 
         # Gérer le changement de colonne et de ligne
@@ -171,6 +176,9 @@ class ImageSelector:
         if self.current_column >= self.max_columns:
             return
 
+    def start_mouse_capture(self, event):
+        """Commencer la capture des clics de souris."""
+        self.clicked = True
 
     def toggle_additional_images(self, frame, toggle_button):
         """Afficher ou cacher la section des images supplémentaires."""
@@ -185,8 +193,11 @@ class ImageSelector:
             frame.grid()  # Afficher les images supplémentaires
             toggle_button.configure(text="Masquer les images supplémentaires")
 
-    def update_character_image(self, image_path):
+    def update_character_image(self, event, image_path):
         """Met à jour l'image du personnage dans l'interface principale."""
+        if not self.clicked:
+            return
+        
         self.dofus.image_path = image_path
         new_image = load_image(image_path, (30, 30))
 

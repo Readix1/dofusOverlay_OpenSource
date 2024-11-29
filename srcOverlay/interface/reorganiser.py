@@ -1,3 +1,6 @@
+import sys
+sys.path.append(r'd:\all\bot\python\pythondof\dofusOverlay_OP/')
+
 from tkinter import IntVar, StringVar, Frame
 from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox, CTkFont
 
@@ -288,7 +291,6 @@ class Reorganiser(CTkToplevel):
     
     def open_image_selector(self, dofus, image_label):
         """Ouvre une nouvelle fenêtre pour sélectionner une image."""
-        print("open_image_selector")
         ImageSelector(self, dofus, image_label, resizable=False)
 
 
@@ -408,8 +410,6 @@ def get_image_path(classe="iop"):
     return "icons/1004.png"
 
 if __name__ == "__main__":
-    import sys
-    sys.path.append(r'd:\all\bot\python\pythondof\dofusOverlay_OP/')
     from srcOverlay.Page_Dofus import Page_Dofus
     
     pages_dofus = [Page_Dofus(1, ini=1), Page_Dofus(0, ini=2), Page_Dofus(4, ini=4)]
