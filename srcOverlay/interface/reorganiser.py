@@ -289,7 +289,7 @@ class Reorganiser(CTkToplevel):
     def open_image_selector(self, dofus, image_label):
         """Ouvre une nouvelle fenêtre pour sélectionner une image."""
         print("open_image_selector")
-        ImageSelector(self, dofus, image_label)
+        ImageSelector(self, dofus, image_label, resizable=False)
 
 
 

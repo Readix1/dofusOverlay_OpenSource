@@ -4,14 +4,15 @@ from tkinter import Frame
 from PIL import Image
 
 class ImageSelector:
-    def __init__(self, parent, dofus, image_label):
+    def __init__(self, parent, dofus, image_label, resizable=True):
         self.parent = parent
         self.dofus = dofus
         self.image_label = image_label
         self.selector_window = CTkToplevel(self.parent)
         self.selector_window.title("Sélection d'image")
+        self.selector_window.geometry("674x462")  # Taille de la fenêtre
         self.selector_window.attributes('-topmost', True)  # Toujours au premier plan
-        self.selector_window.resizable(False, False)  # Fenêtre non redimensionnable
+        # self.selector_window.resizable(resizable, resizable)  # Fenêtre non redimensionnable
         
         # Bloque les interactions avec d'autres fenêtres tant que celle-ci est ouverte
         self.selector_window.grab_set()
@@ -54,6 +55,7 @@ class ImageSelector:
 
             # Charger les images supplémentaires
             # self.load_additional_images(additional_images_frame, type=_type)
+            
 
     def on_focus_out(self, event):
         if not self.selector_window.focus_get():  # Vérifie si la fenêtre a perdu le focus
@@ -80,8 +82,8 @@ class ImageSelector:
 
                 # Création et positionnement des labels pour icône, mâle et femelle dans la frame supplémentaire
                 self.create_image_labels_additionnel(frame, image_icon, icon_path, columns_group,  disposition="big")
-                self.create_image_labels_additionnel(frame, image_male, icon_path, columns_group,  disposition="big")
-                self.create_image_labels_additionnel(frame, image_female, icon_path, columns_group,  disposition="big")
+                self.create_image_labels_additionnel(frame, image_male, male_path, columns_group,  disposition="big")
+                self.create_image_labels_additionnel(frame, image_female, female_path, columns_group,  disposition="big")
         elif type == "icons":
             self.images_per_column_icons = 5 
             columns_group = [1, 5, 6]
@@ -140,7 +142,7 @@ class ImageSelector:
         label_icon.grid(column=self.current_column+self.big_column*self.images_per_row_icons, row=self.current_row, pady=5, padx=padx)
 
         label_icon.bind(
-            "<Button-1>",
+            "<ButtonRelease-1>",
             lambda event, img_path=icon_path: self.update_character_image(img_path),
         )
 
@@ -172,7 +174,6 @@ class ImageSelector:
 
     def toggle_additional_images(self, frame, toggle_button):
         """Afficher ou cacher la section des images supplémentaires."""
-        
         if not frame.loaded:
             self.load_additional_images(frame, type=frame._type)
             frame.loaded = True
