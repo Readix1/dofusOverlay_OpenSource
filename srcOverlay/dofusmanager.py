@@ -107,6 +107,7 @@ class DofusManager(Observer):
     
     def update_shortcut(self, shortcut_name, shortcut, specific_page=False):
         if specific_page==False:
+            del self.shortcut_dict[self.config["keyboard_bindings"][shortcut_name]]
             self.shortcut_dict[shortcut] = self.func_correspondance(shortcut_name)
             self.config["keyboard_bindings"][shortcut_name] = shortcut
         else:
