@@ -10,7 +10,8 @@
         "next_turn": "f1",
         "focus_dofus": "f13",
         "reorganizer": "f11",
-        "actualise": "f4"
+        "actualise": "f4",
+        "macro_clic_next_win": "x1"
     },
     "overlay": {
         "posx": 0,

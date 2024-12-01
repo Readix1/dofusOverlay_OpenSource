@@ -2,8 +2,7 @@
     "Tc-hupper": {
         "classe": "huppermage",
         "ini": 1,
-        "image_path": "ressources\\img_overlay\\heads/170_1.png",
-        "shortcut": "ctrl+a"
+        "image_path": "ressources\\img_overlay\\heads/170_1.png"
     },
     "Tc-fecaa": {
         "classe": "feca",
@@ -23,8 +22,7 @@
     "Indimo": {
         "classe": "iop",
         "ini": 3,
-        "image_path": "ressources\\img_overlay\\heads/80_1.png",
-        "shortcut": "ctrl+z"
+        "image_path": "ressources\\img_overlay\\heads/80_1.png"
     },
     "Divahle": {
         "classe": "Feca",

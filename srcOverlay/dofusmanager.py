@@ -12,9 +12,10 @@ import logging
 
 from pynput import mouse as ppmouse
 
+import queue
 
-import pydirectinput
 
+import threading
 
 class DofusManager(Observer):
     def __init__(self, config, dofus_handler):
@@ -35,6 +36,42 @@ class DofusManager(Observer):
         self.listener.start()
         
         self.shortcut_dict = self.build_shortcut_dict()
+        
+        self.event_queue = queue.Queue()
+        self.worker_thread = threading.Thread(target=self.process_queue)
+        self.worker_thread.daemon = True
+        self.worker_thread.start()
+        self.lock = threading.Lock()
+    
+    def on_scroll(self, x, y, dx, dy):
+        if not self.running:
+            return False  # Arrête le listener si nécessaire
+        print(f"Scrolling : Position=({x}, {y}), dx={dx}, dy={dy}")
+        if dy<0:
+            self._switch_next_win()
+        
+    def on_click(self, x, y, button, pressed):
+        print(f"button {button} pressed {pressed}")
+        if(( button.name=="x2" or button.name=="x1" ) and pressed==False):
+            if self.current==1:
+                key_name = "shift+" + button.name
+            elif self.current==2:
+                key_name = "ctrl+" + button.name
+            else:
+                key_name = button.name
+                
+            if key_name in self.shortcut_dict:
+                self.event_queue.put(self.shortcut_dict[key_name])
+        return self.running
+
+    def process_queue(self):
+        while self.running:
+            try:
+                action = self.event_queue.get(timeout=1)
+                action()
+                self.event_queue.task_done()
+            except queue.Empty:
+                continue
     
     def func_correspondance(self, shortcut, dofus_name=None):
         if shortcut == None:
@@ -53,6 +90,8 @@ class DofusManager(Observer):
             return self.dofus_handler.actualise
         elif shortcut == "stop":
             return self.ask_stop
+        elif shortcut == "macro_clic_next_win":
+            return self.macro_clic_next_win
         else: 
             logging.error(f"shortcut {shortcut} not found")
         
@@ -112,7 +151,6 @@ class DofusManager(Observer):
         return self.running
     
 
-            
         
     def save_config(self):
         with open("ressources/config.json", 'r') as file:
@@ -128,13 +166,13 @@ class DofusManager(Observer):
         return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win']
 
 
-    def on_click(self, x,y,button, pressed):
-        if(self.allow_event() and ( button.name=="x2" or button.name=="x1" ) and pressed==False):
-            self.mouse.click(ppmouse.Button.left, 1)
-            self._switch_next_win()                
-        return self.running
 
-           
+
+    def macro_clic_next_win(self):
+        with self.lock:
+            if(self.allow_event()):
+                self.mouse.click(ppmouse.Button.left, 1)
+                self._switch_next_win()
             
     def allow_event(self):
         tmp = win32gui.GetForegroundWindow()
