@@ -35,7 +35,7 @@ if config["overlay"]["auto-actualisation"]:
 dm = DofusManager(config, dh)
 
 if config["overlay"]["afficher_overlay"]:
-    interface = DofusGuideOverlay(config, dh.dofus, dh.open_index_dofus, dh=dh)
+    interface = DofusGuideOverlay(config, dh.dofus, dh.open_index_dofus, dh=dh, orientation=config["overlay"]["horizontal"])
     if config["overlay"]["auto-actualisation"]:
         Listener(dh).start()
     # ThreadListener(interface)

@@ -6,7 +6,10 @@ from srcOverlay.interface.reorganiser import Reorganiser
 from threading import RLock
 import tkinter as tk
 from tkinter import font
-from PIL import Image,ImageTk
+from PIL import Image, ImageTk
+
+from customtkinter import CTkImage
+
 
 import queue
 
@@ -16,12 +19,13 @@ dict_head = {"feca":10, "osamodas":20, "enutrof":30, "sram":40, "xelor":50, "eca
              "steamer":150, "eliotrope":160, "huppermage":170, "ouginak":180, "forgelance":200}
 
 class DofusGuideOverlay(Overlay):
-    def __init__(self, config, order, open_dofus_methode=None, dh=None, width = 50, height = 400):
+    def __init__(self, config, order, open_dofus_methode=None, dh=None, width = 50, height = 400, orientation=0):
         Overlay.__init__(self, 25, 100, x=width, y=height, alpha=1)
         self.bind("<<Destroy>>", lambda e: self.destroy())
         
         self.width = width
         self.height = height
+        self.orientation = "horizontal" if orientation == 1 else "vertical"
         self.open_dofus_methode=open_dofus_methode
         self.dh = dh
         
@@ -63,7 +67,7 @@ class DofusGuideOverlay(Overlay):
         self.btn_next.bind("<Enter>", lambda e, widget=self.btn_next: self.disable_drag(e, widget))  # Désactiver le drag au survol
         self.btn_next.bind("<Leave>", lambda e: self.enable_drag(e))  # Réactiver le drag après avoir quitté
         
-        self.chevrons = dessiner_chevron(self.canvas, 50, 70)
+        self.chevrons = dessiner_chevron(self.canvas, 50, 70, self.orientation)
         
     def process_queue(self):
         """Vérifie la file et exécute les tâches dans le thread principal."""
@@ -75,14 +79,22 @@ class DofusGuideOverlay(Overlay):
 
 
     def resize(self):
-        h = self.get_position(len(self.order))[1]-15
-        self.geometry(f"{self.width}x{h}")  # Redimensionner la fenêtre
-        
-        self.canvas.config(width=self.width, height=h)  # Mettre à jour les dimensions du Canvas
-        self.canvas.coords(
-            self.rect_bg,
-            get_rounded_rectangle_coords(0, 0, self.width, h, 23)
-        )
+        if self.orientation == "horizontal":
+            w = self.get_position(len(self.order))[0] - 15
+            self.geometry(f"{w}x{self.width}")
+            self.canvas.config(width=w, height=self.width)
+            self.canvas.coords(
+                self.rect_bg,
+                get_rounded_rectangle_coords(0, 0, w, self.width, 23)
+            )
+        else:  # Orientation verticale
+            h = self.get_position(len(self.order))[1] - 15
+            self.geometry(f"{self.width}x{h}")
+            self.canvas.config(width=self.width, height=h)
+            self.canvas.coords(
+                self.rect_bg,
+                get_rounded_rectangle_coords(0, 0, self.width, h, 23)
+            )
     
         
     def dragwin(self, event):
@@ -116,17 +128,29 @@ class DofusGuideOverlay(Overlay):
         with self.lock:
             position = self.get_position(indice)
             
-            if position:
-                x, y = position
-                # Coordonner les sommets du chevron (triangle orienté vers la droite)
-                decal_x = 24
-                
-                points1 = [
-                    x + decal_x, y
-                ]
-                
-                self.canvas.coords(self.chevrons, points1)  # Ajuster les coordonnées
-                self.canvas.itemconfig(self.chevrons, state="normal")  # Rendre visible
+            if self.orientation == "vertical":
+                if position:
+                    x, y = position
+                    # Coordonner les sommets du chevron (triangle orienté vers la droite)
+                    decal_x = 24
+                    
+                    points1 = [
+                        x + decal_x, y
+                    ]
+                    
+
+            else:
+                if position:
+                    x, y = position
+                    # Coordonner les sommets du chevron (triangle orienté vers le bas)
+                    decal_y = 24
+                    
+                    points1 = [
+                        x, y + decal_y
+                    ]
+
+            self.canvas.coords(self.chevrons, points1)  # Ajuster les coordonnées
+            self.canvas.itemconfig(self.chevrons, state="normal")  # Rendre visible
 
             self.current_shown = indice
         
@@ -228,43 +252,53 @@ class DofusGuideOverlay(Overlay):
     def stop_drag(self, event):
         """Stoppe le drag et réorganise les images."""
         if self.dragging_index is not None:
-            # Détecter la nouvelle position
-            new_index = self.get_drop_index(event.y, self.dragging_index)
+            # Détecter la nouvelle position selon l'orientation
+            mouse_coord = event.x if self.orientation == "horizontal" else event.y
+            new_index = self.get_drop_index(mouse_coord, self.dragging_index)
+
             if new_index is not None and new_index != self.dragging_index:
                 # Réorganiser self.order
                 moved_item = self.order[self.current_shown]
                 self.order.insert(new_index, self.order.pop(self.dragging_index))
                 
+                # Réinitialiser les indices `ini` pour chaque élément
                 for i, dofus in enumerate(self.order):
-                    dofus.ini = len(self.order)-i
-                    
-                # Mettre à jour `self.current_shown` pour qu'il corresponde au nouvel index de l'élément affiché
+                    dofus.ini = len(self.order) - i
+                
+                # Mettre à jour `self.current_shown` pour correspondre au nouvel index
                 self.current_shown = self.order.index(moved_item)
                 if self.dh:
                     self.dh.current_shown = self.current_shown
 
-                self.update_order(self.order)  # Mettre à jour l'affichage avec le nouvel ordre
+                # Mettre à jour l'affichage avec le nouvel ordre
+                self.update_order(self.order)
 
             # Réinitialiser les variables de drag
             self.dragging_index = None
             self.dragging_window_id = None
             self.canvas.config(cursor="hand2")
 
-    def get_drop_index(self, mouse_y, current_index):
-        """Détermine l'indice cible où l'image est déposée."""
+
+    def get_drop_index(self, mouse_coord, current_index):
+        """Détermine l'indice cible où l'image est déposée, selon l'orientation."""
         for i, _ in enumerate(self.order):
             x, y = self.get_position(i)
-            if y <= mouse_y+int(self.get_position(current_index)[1]) <= y + self.head_width:
+            ref_coord = x if self.orientation == "horizontal" else y
+            current_ref_coord = self.get_position(current_index)[0] if self.orientation == "horizontal" else self.get_position(current_index)[1]
+            dimension = self.head_width
+
+            if ref_coord <= mouse_coord + int(current_ref_coord) <= ref_coord + dimension:
                 return i
-        # Si la souris est en dehors, retourner None ou l'indice final
-        # if mouse_y > self.get_position(len(self.order) - 1)[1]:
-        #     return len(self.order) - 1
+        # Si la souris est en dehors, retourner None
         return None
 
-    def is_valid_drop_zone(self, x, y):
-        """Détermine si la position (x, y) est dans une zone valide."""
-        # Par exemple, vérifier si la souris est dans un rectangle défini comme une zone valide
-        return self.get_drop_index(y, self.dragging_index)!=None # and 17 <=x+int(self.get_position(self.dragging_index)[0]) <= 17+self.head_width
+    def is_valid_drop_zone(self, mouse_x, mouse_y):
+        """Détermine si la position (mouse_x, mouse_y) est dans une zone valide."""
+        if self.orientation == "horizontal":
+            return self.get_drop_index(mouse_x, self.dragging_index) is not None
+        else:
+            return self.get_drop_index(mouse_y, self.dragging_index) is not None
+
     
     def open_reorganize(self, order):
         self.order = order
@@ -296,14 +330,17 @@ class DofusGuideOverlay(Overlay):
             self.perso[dofus].config(background="grey")
             
     def get_position(self, indice):
-        return (17, 51+(self.head_width+10)*indice)
+        if self.orientation == "horizontal":
+            return (60 + (self.head_width + 10) * indice, 17)  # Disposition en ligne
+        else:  # Orientation verticale par défaut
+            return (17, 51 + (self.head_width + 10) * indice)
     
     def select(self, indice):
         if self.open_dofus_methode:
             self.open_dofus_methode(indice)
             
     def open_button_image(self, canvas, x, y, path, size, **kwargs):
-        img = load_image(path, size)
+        img = load_image(path, size, rotate=0 if self.orientation == "vertical" else -90)
         # button = canvas.create_image(x, y, image=img)
         
         label_avatar = tk.Label(self, image=img, bg=self.background_color)
@@ -344,9 +381,12 @@ def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
     return rect
 
 # Charger les images des avatars
-def load_image(path, size):
+def load_image(path, size, rotate=0):
     img = Image.open(path)
     img = img.resize(size, Image.LANCZOS)
+    if rotate:
+        img = img.rotate(rotate)  # Rotation de 180 degrés
+    # return CTkImage(img, size=size)
     return ImageTk.PhotoImage(img)
 
 def get_rounded_rectangle_coords(x1, y1, x2, y2, radius):
@@ -367,9 +407,12 @@ def get_rounded_rectangle_coords(x1, y1, x2, y2, radius):
     ]
     return [coord for point in points for coord in point]  # Aplatir les tuples
 
-def dessiner_chevron(canvas, x, y):
+def dessiner_chevron(canvas, x, y, orientation="vertical"):
     """Dessine un chevron `<` sur un Canvas."""
-    return canvas.create_text(x, y, text="<", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
+    if orientation == "vertical":
+        return canvas.create_text(x, y, text="<", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
+    else:
+        return canvas.create_text(x, y, text="^", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
 
 def get_image_path(classe="iop"):
     if classe.lower() in dict_head:
@@ -427,5 +470,6 @@ if __name__ == "__main__":
     with open("ressources/config.json",encoding="utf-8") as file:
         config = json.load(file)
         
-    ihm = DofusGuideOverlay(config, pages_dofus)
+    ihm = DofusGuideOverlay(config, pages_dofus, orientation="horizontal")
+    # ihm = DofusGuideOverlay(config, pages_dofus, orientation="vertical")
     ihm.mainloop()

@@ -2,12 +2,11 @@ import sys
 sys.path.append(r'd:\all\bot\python\pythondof\dofusOverlay_OP/')
 
 from tkinter import IntVar, StringVar, Frame
-from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox, CTkFont
+from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox, CTkFont, CTkImage
 
 from pynput import keyboard
 
-from PIL import Image, ImageTk
-from customtkinter import CTkImage
+from PIL import Image
 from srcOverlay.interface.image_selector import ImageSelector
 
 class Reorganiser(CTkToplevel):

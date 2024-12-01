@@ -51,7 +51,6 @@ class DofusManager(Observer):
             self._switch_next_win()
         
     def on_click(self, x, y, button, pressed):
-        print(f"button {button} pressed {pressed}")
         if(( button.name=="x2" or button.name=="x1" ) and pressed==False):
             if self.current==1:
                 key_name = "shift+" + button.name

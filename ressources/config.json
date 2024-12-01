@@ -19,6 +19,7 @@
         "afficher_overlay": 1,
         "auto-actualisation": 1,
         "auto-disparition": 0,
-        "opacity": 0.8
+        "opacity": 0.8,
+        "horizontal": 0
     }
 }
