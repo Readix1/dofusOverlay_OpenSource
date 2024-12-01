@@ -4,10 +4,12 @@ sys.path.append(r'd:\all\bot\python\pythondof\dofusOverlay_OP/')
 from tkinter import IntVar, StringVar, Frame
 from customtkinter import CTkToplevel, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkComboBox, CTkFont, CTkImage
 
-from pynput import keyboard
+from pynput import keyboard, mouse
 
 from PIL import Image
 from srcOverlay.interface.image_selector import ImageSelector
+
+from threading import Lock
 
 class Reorganiser(CTkToplevel):
     def __init__(self, pages_dofus, overlay, dh):
@@ -28,14 +30,17 @@ class Reorganiser(CTkToplevel):
         self.disable_window_drag = False  # New: Control window drag based on context
         self.current=0
         
+        self.listener_lock = Lock()
+        self.keyboard_listener = None
+        self.mouse_listener = None
+        self.listeners_active = False
+        
         self.ini_dict = {}
         self.check_dict = {}
         self.class_dict = {}
         self.gender_dict = {}
         
         self.row_widgets = []
-        self.previous_shortcut="Précédent"
-        self.next_shortcut="Suivant"
         
         self.principal_frame = CTkFrame(self)
         self.principal_frame.pack(padx=10, pady=10, expand=True, fill="both")
@@ -117,25 +122,23 @@ class Reorganiser(CTkToplevel):
         self.bind('<ButtonRelease-1>', self.release_dragwin)
         
     def update_previous_button(self, shortcut):
-        self.previous_shortcut = shortcut
         self.previous_button.configure(text=shortcut)
         
     def update_next_button(self, shortcut):
-        self.next_shortcut = shortcut
         self.next_button.configure(text=shortcut)
         
     def update_previous_shortcut(self):
         self.previous_button.configure(text="")
 
         # Démarrer un listener pour écouter les touches du clavier
-        self.start_update_shortcut_listener(self.previous_button, "previous_shortcut")
+        self.start_update_shortcut_listener(self.previous_button, "prev_win")
             
     
     def update_next_shortcut(self):
         self.next_button.configure(text="")
 
         # Démarrer un listener pour écouter les touches du clavier
-        self.start_update_shortcut_listener(self.next_button, "next_shortcut")
+        self.start_update_shortcut_listener(self.next_button, "next_win")
         
     def update_specific_shortcut(self, button, shortcut_attr_name):
         button.configure(text="")
@@ -144,26 +147,53 @@ class Reorganiser(CTkToplevel):
         self.start_update_shortcut_listener(button, shortcut_attr_name, specific_page=True)
     
     def start_update_shortcut_listener(self, button, shortcut_attr_name, specific_page=False):
+        
+        if self.listeners_active==True:
+            print("Listeners déjà actifs. Ignorer la réactivation.")
+            return
+        
+        self.listeners_active = True
+        
+        def stop_listeners():
+            # Arrêter les listeners actifs
+            if hasattr(self, 'keyboard_listener') and self.keyboard_listener:
+                self.keyboard_listener.stop()
+                self.keyboard_listener = None
+            if hasattr(self, 'mouse_listener') and self.mouse_listener:
+                self.mouse_listener.stop()
+                self.mouse_listener = None
+            self.listeners_active = False
+            return False
+
+        def start_keyboard_listener():
+            self.keyboard_listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+            self.keyboard_listener.start()
+
+        def start_mouse_listener():
+            self.mouse_listener = mouse.Listener(on_click=on_click)
+            self.mouse_listener.start()
+        
         def on_press(key):
-            try:
-                key_name = ""
-                if '_name_' in key.__dict__ :
-                    key_name = key.name
-                elif key.char:
-                    if ord(key.char) < 32:
-                        key_char = chr(ord('a') + ord(key.char) - 1)
-                        key_name = key_char
-                    else:
-                        key_name = str(key.char)
-                
-                if key_name == "shift":
-                    self.current=1
-                elif "ctrl"in key_name:
-                    self.current=2
-                elif key_name == "esc":
-                    if specific_page==False:
-                        button.configure(text=getattr(self, shortcut_attr_name))
-                    else:
+            with self.listener_lock:  # Bloquer l'accès avec le verrou
+                try:
+                    key_name = ""
+                    if '_name_' in key.__dict__:
+                        key_name = key.name
+                    elif key.char:
+                        if ord(key.char) < 32:
+                            key_char = chr(ord('a') + ord(key.char) - 1)
+                            key_name = key_char
+                        else:
+                            key_name = str(key.char)
+
+                    if key_name == "shift":
+                        self.current = 1
+                    elif "ctrl" in key_name:
+                        self.current = 2
+                    elif key_name == "esc":
+                        # if not specific_page:
+                        #     button.configure(text=getattr(self, shortcut_attr_name))
+                        # else:
                         for dofus in self.pages_dofus:
                             if dofus.name == shortcut_attr_name:
                                 dofus.shortcut = ""
@@ -171,18 +201,53 @@ class Reorganiser(CTkToplevel):
                         button.configure(text="Aucun")
                         if self.dh:
                             self.dh.update_shortcut(shortcut_attr_name, "", specific_page)
-                    self.current=0
+                        self.current = 0
+                        return stop_listeners()
+                    else:
+                        prefix = ""
+                        if self.current == 1:
+                            prefix += "shift+"
+                        elif self.current == 2:
+                            prefix += "ctrl+"
+
+                        shortcut_name = prefix + str(key_name)
+
+                        if not specific_page:
+                            setattr(self, shortcut_attr_name, shortcut_name)
+                            button.configure(text=shortcut_name)
+                            if self.dh:
+                                if shortcut_name and "next" in shortcut_attr_name:
+                                    self.dh.update_shortcut("next_win", shortcut_name)
+                                else:
+                                    self.dh.update_shortcut("prev_win", shortcut_name)
+                        else:
+                            for dofus in self.pages_dofus:
+                                if dofus.name == shortcut_attr_name:
+                                    dofus.shortcut = shortcut_name
+                                    break
+                            button.configure(text=shortcut_name)
+                            if self.dh:
+                                self.dh.update_shortcut(shortcut_attr_name, shortcut_name, specific_page)
+
+                        self.current = 0
+                        return stop_listeners()
+
+                except AttributeError as e:
+                    print(f"special key {key}", e)
                     return False
-                else:
-                    prefix = ""
-                    if self.current==1:
-                        prefix+="shift+"
-                    elif self.current==2:
-                        prefix+="ctrl+"
-                        
-                    shortcut_name = prefix+str(key_name)
-                    
-                    if specific_page==False:
+        
+            
+        def on_release(key):
+            if '_name_' in key.__dict__ :
+                print(key.name)
+                if key.name == "shift" or "ctrl"in key.name:
+                    self.current=0
+        
+        def on_click(x, y, key, pressed):
+            if pressed and ( key.name=="x2" or key.name=="x1" ):
+                with self.listener_lock:  # Bloquer pendant l'action de clic
+                    shortcut_name = f"{key.name}"
+                    if not specific_page:
                         setattr(self, shortcut_attr_name, shortcut_name)
                         button.configure(text=shortcut_name)
                         if self.dh:
@@ -198,25 +263,13 @@ class Reorganiser(CTkToplevel):
                         button.configure(text=shortcut_name)
                         if self.dh:
                             self.dh.update_shortcut(shortcut_attr_name, shortcut_name, specific_page)
-                    
-                    self.current=0
-                    return False
 
-                
-            except AttributeError as e:
-                print(f"special key {key}", e)
-                return False
-        
-            
-        def on_release(key):
-            if '_name_' in key.__dict__ :
-                print(key.name)
-                if key.name == "shift" or "ctrl"in key.name:
-                    self.current=0
+                    self.current = 0
+                    return stop_listeners()
 
-        # Démarrer le listener
-        listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-        listener.start()
+        start_keyboard_listener()
+
+        start_mouse_listener()
     
     def actualise(self):
         self.pages_dofus = sorted(self.dh.dofus, key=lambda x: x.ini, reverse=True)
@@ -298,7 +351,7 @@ class Reorganiser(CTkToplevel):
         # Initiative entry
         ini_var = StringVar(value=dofus.ini)
         self.ini_dict[dofus] = ini_var
-        initiative_entry = CTkEntry(row_frame, textvariable=ini_var, width=60)
+        initiative_entry = CTkEntry(row_frame, textvariable=ini_var, width=60, )
         initiative_entry.pack(side="left", padx=5)
 
         # Checkbox
@@ -389,7 +442,7 @@ class Reorganiser(CTkToplevel):
     
     def enter(self):
         for dofus in self.pages_dofus:
-            dofus.ini = int(self.ini_dict[dofus].get())
+            dofus.ini = int(self.ini_dict[dofus].get() if self.ini_dict[dofus].get() else 0)
             dofus.selected = self.check_dict[dofus].get()
             
             if self.overlay:

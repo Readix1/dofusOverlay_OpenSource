@@ -17,8 +17,7 @@
     "Tc-arc": {
         "classe": "cra",
         "ini": 2,
-        "image_path": "ressources\\img_overlay\\heads/90_1.png",
-        "shortcut": "x2"
+        "image_path": "ressources\\img_overlay\\heads/90_1.png"
     },
     "Indimo": {
         "classe": "iop",
