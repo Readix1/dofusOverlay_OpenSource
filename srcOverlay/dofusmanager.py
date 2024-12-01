@@ -36,6 +36,7 @@ class DofusManager(Observer):
         self.listener.start()
         
         self.shortcut_dict = self.build_shortcut_dict()
+        self.specific_shortcut = {}
         
         self.event_queue = queue.Queue()
         self.worker_thread = threading.Thread(target=self.process_queue)
@@ -111,7 +112,10 @@ class DofusManager(Observer):
             self.shortcut_dict[shortcut] = self.func_correspondance(shortcut_name)
             self.config["keyboard_bindings"][shortcut_name] = shortcut
         else:
+            if shortcut_name in self.specific_shortcut:
+                del self.shortcut_dict[self.specific_shortcut[shortcut_name]]
             self.shortcut_dict[shortcut] = self.func_correspondance(None, shortcut_name)
+            self.specific_shortcut[shortcut_name] = shortcut
             
                    
     def on_press(self,key):

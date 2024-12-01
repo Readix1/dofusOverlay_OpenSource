@@ -194,13 +194,14 @@ class Reorganiser(CTkToplevel):
                         # if not specific_page:
                         #     button.configure(text=getattr(self, shortcut_attr_name))
                         # else:
+                        if self.dh:
+                            self.dh.update_shortcut(shortcut_attr_name, "", specific_page)
                         for dofus in self.pages_dofus:
                             if dofus.name == shortcut_attr_name:
                                 dofus.shortcut = ""
                                 break
                         button.configure(text="Aucun")
-                        if self.dh:
-                            self.dh.update_shortcut(shortcut_attr_name, "", specific_page)
+                        
                         self.current = 0
                         return stop_listeners()
                     else:
@@ -442,7 +443,7 @@ class Reorganiser(CTkToplevel):
     
     def enter(self):
         for dofus in self.pages_dofus:
-            dofus.ini = int(self.ini_dict[dofus].get() if self.ini_dict[dofus].get() else 0)
+            dofus.ini = int(self.ini_dict[dofus].get() if (self.ini_dict[dofus].get() and self.ini_dict[dofus].get().isdigit() ) else 0)
             dofus.selected = self.check_dict[dofus].get()
             
             if self.overlay:
