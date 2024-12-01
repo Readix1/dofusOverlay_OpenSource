@@ -37,7 +37,6 @@ class Reorganiser(CTkToplevel):
         self.row_widgets = []
         self.previous_shortcut="Précédent"
         self.next_shortcut="Suivant"
-        self.shortcut_for_particular_page = {}
         
         self.principal_frame = CTkFrame(self)
         self.principal_frame.pack(padx=10, pady=10, expand=True, fill="both")

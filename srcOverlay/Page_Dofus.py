@@ -60,8 +60,9 @@ class Page_Dofus():
         tmp_classe = self.classe
         self.set_name()
         if tmp_name != self.name or (tmp_classe and tmp_classe != self.classe):
-            print("update_name")
             self.get_info()
+            if self.handler and self.shortcut != "":
+                self.handler.update_shortcut(self.name, self.shortcut, True)
         return tmp_name != self.name or tmp_classe != self.classe
     
     def open(self):

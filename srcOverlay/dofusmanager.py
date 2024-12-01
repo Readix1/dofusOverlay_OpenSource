@@ -34,8 +34,47 @@ class DofusManager(Observer):
             on_click=self.on_click)
         self.listener.start()
         
-        self.shortcut_for_particular_page = {}
+        self.shortcut_dict = self.build_shortcut_dict()
+    
+    def func_correspondance(self, shortcut, dofus_name=None):
+        if shortcut == None:
+            return lambda : self.dofus_handler.open_specific_page(dofus_name)
+        if shortcut == "next_win":
+            return self._switch_next_win
+        elif shortcut == "prev_win":
+            return self._switch_previous_win
+        elif shortcut == "next_turn":
+            return self.next_turn
+        elif shortcut == "focus_dofus":
+            return self._open_current
+        elif shortcut == "reorganizer":
+            return self.dofus_handler.open_reorganize
+        elif shortcut == "actualise":
+            return self.dofus_handler.actualise
+        elif shortcut == "stop":
+            return self.ask_stop
+        else: 
+            logging.error(f"shortcut {shortcut} not found")
         
+    def build_shortcut_dict(self):
+        dict_res = {}
+        for name, shortcut in self.config["keyboard_bindings"].items():
+            dict_res[shortcut] = self.func_correspondance(name)
+            
+        for dofus in self.dofus_handler.dofus:
+            if dofus.shortcut != "":
+                dict_res[dofus.shortcut] = self.func_correspondance(None, dofus.name)    
+        
+        return dict_res
+    
+    def update_shortcut(self, shortcut_name, shortcut, specific_page=False):
+        if specific_page==False:
+            self.shortcut_dict[shortcut] = self.func_correspondance(shortcut_name)
+            self.config["keyboard_bindings"][shortcut_name] = shortcut
+        else:
+            self.shortcut_dict[shortcut] = self.func_correspondance(None, shortcut_name)
+            
+                   
     def on_press(self,key):
         try:
             if '_name_' not in key.__dict__:
@@ -44,8 +83,6 @@ class DofusManager(Observer):
                 self.current=1
             elif "ctrl"in key.name:
                 self.current=2
-            elif key.name == self.config["keyboard_bindings"]['stop']:
-                self.ask_stop()
             
         except:
             logging.error('erreur on press dofusManager')
@@ -63,34 +100,19 @@ class DofusManager(Observer):
         
         if key_name == "shift" or "ctrl"in key_name:
             self.current=0
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['stop']):
-            self.ask_stop()
-            return False
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['next_win']):
-            self._switch_next_win()
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['prev_win']):
-            self._switch_previous_win()
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['next_turn']):
-            self.next_turn()
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['focus_dofus']):
-            self._open_current()
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['reorganizer']):
-            self.dofus_handler.open_reorganize()
-        elif self.is_pressed(key_name, self.config["keyboard_bindings"]['actualise']):
-            self.dofus_handler.actualise()
         else:
-            for name, shortcut in self.shortcut_for_particular_page.items():
-                if self.is_pressed(key_name, shortcut):
-                    self.dofus_handler.open_specific_page(name)
-                    break
+            if self.current==1:
+                key_name = "shift+" + key_name
+            elif self.current==2:
+                key_name = "ctrl+" + key_name
+                
+            if key_name in self.shortcut_dict:
+                self.shortcut_dict[key_name]()
         
         return self.running
     
-    def update_shortcut(self, shortcut_name, shortcut, specific_page=False):
-        if specific_page==False:
-            self.config["keyboard_bindings"][shortcut_name] = shortcut
-        else:
-            self.shortcut_for_particular_page[shortcut_name] = shortcut
+
+            
         
     def save_config(self):
         with open("ressources/config.json", 'r') as file:
@@ -105,14 +127,6 @@ class DofusManager(Observer):
     def get_shortcut(self, ):
         return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win']
 
-    def is_pressed(self, key_name, shortcut):
-        if key_name == shortcut and self.current==0:
-            return True
-        elif key_name in shortcut and "shift" in shortcut and self.current==1:
-            return True
-        elif key_name in shortcut and "ctrl" in shortcut and self.current==2:
-            return True 
-        return False
 
     def on_click(self, x,y,button, pressed):
         if(self.allow_event() and ( button.name=="x2" or button.name=="x1" ) and pressed==False):
@@ -129,6 +143,7 @@ class DofusManager(Observer):
 
     def ask_stop(self):
         self.dofus_handler.stop()
+        self.running = False
         
     def stop_manager(self):
         self.listener.stop()

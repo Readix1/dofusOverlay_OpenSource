@@ -23,7 +23,8 @@
     "Indimo": {
         "classe": "iop",
         "ini": 3,
-        "image_path": "ressources\\img_overlay\\heads/80_1.png"
+        "image_path": "ressources\\img_overlay\\heads/80_1.png",
+        "shortcut": "ctrl+z"
     },
     "Divahle": {
         "classe": "Feca",
@@ -41,5 +42,10 @@
         "classe": "",
         "ini": 0,
         "image_path": "ressources\\img_overlay\\heads/120_1.png"
+    },
+    "Tc-enutrosor": {
+        "classe": "",
+        "ini": 0,
+        "image_path": "ressources\\img_overlay\\icons/1004.png"
     }
 }

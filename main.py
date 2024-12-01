@@ -55,8 +55,8 @@ if config["overlay"]["afficher_overlay"]:
     dh.add_observer('getHwnd',lambda : interface.getHwnd())
     
     interface.mainloop()
-    
-    
+
+
 if config["overlay"]["auto-actualisation"]:
     dh.join()
 else:
