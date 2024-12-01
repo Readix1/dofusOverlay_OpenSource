@@ -50,13 +50,13 @@ Pour cela il faut ajouter une ligne dans le dictionnaire de la forme "« nom »"
 ![](demo/overlay.png)
 
 ## Bugs
-- Crash de l'application qui survient lors d'un click sur un personnage pour changer de fenêtre
 
 ## A ajouter:
-- Permettre la réorganisation des personnages sans avoir à relancer l'application
+- mettre à jour l'affichage quand il y a un conflit sur les touches
+- tooltip sur les checkbox pour rappeler le ctrl+click sur les images
+- tooltip sur les bouton listener de shortcut pour dire que echap permet de mettre aucun
 
 ## Bugs résolus
-- Disparition de l'overlay lors d'un click entre deux personnages
 
 ## Feature ajoutée 
 - Macro click + tab
