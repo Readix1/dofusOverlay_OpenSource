@@ -14,6 +14,10 @@ from pynput import mouse as ppmouse
 
 import queue
 
+import ctypes
+
+user32 = ctypes.windll.user32
+
 
 import threading
 
@@ -175,7 +179,8 @@ class DofusManager(Observer):
     def macro_clic_next_win(self):
         with self.lock:
             if(self.allow_event()):
-                self.mouse.click(ppmouse.Button.left, 1)
+                # self.mouse.click(ppmouse.Button.left, 1)
+                click_mouse()
                 self._switch_next_win()
             
     def allow_event(self):
@@ -210,6 +215,14 @@ class DofusManager(Observer):
         self.dofus_handler.open_current_page()
        
     
+def click_mouse():
+    # Codes d'événement de clic pour Windows
+    MOUSEEVENTF_LEFTDOWN = 0x0002
+    MOUSEEVENTF_LEFTUP = 0x0004
+
+    user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)  # Appuyer sur le bouton gauche
+    time.sleep(0.05)  # Petite pause pour simuler un clic humain
+    user32.mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)  # Relâcher le bouton gauche
 
  
 

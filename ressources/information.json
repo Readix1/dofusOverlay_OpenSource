@@ -45,5 +45,50 @@
         "classe": "",
         "ini": 0,
         "image_path": "ressources\\img_overlay\\icons/1004.png"
+    },
+    "Enubu": {
+        "classe": "Enutrof",
+        "ini": 8,
+        "image_path": "ressources\\img_overlay\\heads/30_1.png"
+    },
+    "Readix": {
+        "classe": "Iop",
+        "ini": 7,
+        "image_path": "ressources\\img_overlay\\heads/80_1.png"
+    },
+    "Ganna": {
+        "classe": "Pandawa",
+        "ini": 6,
+        "image_path": "ressources\\img_overlay\\heads/120_1.png"
+    },
+    "Bactyleni": {
+        "classe": "Roublard",
+        "ini": 5,
+        "image_path": "ressources\\img_overlay\\heads/130_1.png"
+    },
+    "Armou": {
+        "classe": "Zobal",
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\heads/140_1.png"
+    },
+    "Molit-Yana": {
+        "classe": "Cra",
+        "ini": 3,
+        "image_path": "ressources\\img_overlay\\heads/90_1.png"
+    },
+    "Seijutsu": {
+        "classe": "Forgelance",
+        "ini": 2,
+        "image_path": "ressources\\img_overlay\\heads/200_1.png"
+    },
+    "La-Sere-Trics": {
+        "classe": "Eniripsa",
+        "ini": 1,
+        "image_path": "ressources\\img_overlay\\heads/70_1.png"
+    },
+    "Biriru-Tacalvangle": {
+        "classe": "Pandawa",
+        "ini": 0,
+        "image_path": "ressources\\img_overlay\\heads/120_1.png"
     }
 }
