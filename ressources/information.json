@@ -48,7 +48,7 @@
     },
     "Enubu": {
         "classe": "Enutrof",
-        "ini": 8,
+        "ini": 1,
         "image_path": "ressources\\img_overlay\\heads/30_1.png"
     },
     "Readix": {
@@ -58,7 +58,7 @@
     },
     "Ganna": {
         "classe": "Pandawa",
-        "ini": 6,
+        "ini": 7,
         "image_path": "ressources\\img_overlay\\heads/120_1.png"
     },
     "Bactyleni": {
@@ -68,27 +68,27 @@
     },
     "Armou": {
         "classe": "Zobal",
-        "ini": 4,
+        "ini": 2,
         "image_path": "ressources\\img_overlay\\heads/140_1.png"
     },
     "Molit-Yana": {
         "classe": "Cra",
-        "ini": 3,
+        "ini": 6,
         "image_path": "ressources\\img_overlay\\heads/90_1.png"
     },
     "Seijutsu": {
         "classe": "Forgelance",
-        "ini": 2,
+        "ini": 4,
         "image_path": "ressources\\img_overlay\\heads/200_1.png"
     },
     "La-Sere-Trics": {
         "classe": "Eniripsa",
-        "ini": 1,
+        "ini": 3,
         "image_path": "ressources\\img_overlay\\heads/70_1.png"
     },
     "Biriru-Tacalvangle": {
         "classe": "Pandawa",
-        "ini": 0,
+        "ini": 8,
         "image_path": "ressources\\img_overlay\\heads/120_1.png"
     }
 }

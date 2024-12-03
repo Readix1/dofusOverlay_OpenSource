@@ -19,17 +19,20 @@ dict_head = {"feca":10, "osamodas":20, "enutrof":30, "sram":40, "xelor":50, "eca
              "steamer":150, "eliotrope":160, "huppermage":170, "ouginak":180, "forgelance":200}
 
 class DofusGuideOverlay(Overlay):
-    def __init__(self, config, order, open_dofus_methode=None, dh=None, width = 50, height = 400, orientation=0):
+    def __init__(self, config, order, open_dofus_methode=None, dh=None, head_width=25, orientation=0):
+        width = 50
+        height = 400
+        
         Overlay.__init__(self, 25, 100, x=width, y=height, alpha=1)
         self.bind("<<Destroy>>", lambda e: self.destroy())
         
-        self.width = width
         self.height = height
         self.orientation = "horizontal" if orientation == 1 else "vertical"
         self.open_dofus_methode=open_dofus_methode
         self.dh = dh
         
-        self.head_width = 25
+        self.head_width = max(20, head_width)
+        self.width = self.head_width + 25
         self.background_color = "#1b1a1d"
         self.configure(bg="red")  # Fond noir
         self.wm_attributes("-transparentcolor", "red")
@@ -61,13 +64,20 @@ class DofusGuideOverlay(Overlay):
         
         self.rect_bg = draw_rounded_rectangle(self.canvas , 0, 0, self.width, self.height, 23, fill=self.background_color)
         
-        self.btn_next = self.open_button_image(self.canvas, self.width/2, 12+4, self.config_json['img']['path2']+"bouton.png", (20, 20))
+        
+        if self.orientation == "vertical":
+            x = self.width/2
+            y = 12+4
+        else :
+            x = 12+4
+            y = self.width/2
+        self.btn_next = self.open_button_image(self.canvas, x, y, self.config_json['img']['path2']+"bouton.png", (20, 20))
         self.btn_next.bind("<Button-1>", lambda e : self.open_reorganize(self.order))
         
         self.btn_next.bind("<Enter>", lambda e, widget=self.btn_next: self.disable_drag(e, widget))  # Désactiver le drag au survol
         self.btn_next.bind("<Leave>", lambda e: self.enable_drag(e))  # Réactiver le drag après avoir quitté
         
-        self.chevrons = dessiner_chevron(self.canvas, 50, 70, self.orientation)
+        self.chevrons = dessiner_chevron(self.canvas, 50, 70, self.orientation, size=self.head_width/2)
         
     def process_queue(self):
         """Vérifie la file et exécute les tâches dans le thread principal."""
@@ -80,7 +90,7 @@ class DofusGuideOverlay(Overlay):
 
     def resize(self):
         if self.orientation == "horizontal":
-            w = self.get_position(len(self.order))[0] - 15
+            w = self.get_position(len(self.order))[0] - int(self.head_width/2)
             self.geometry(f"{w}x{self.width}")
             self.canvas.config(width=w, height=self.width)
             self.canvas.coords(
@@ -88,7 +98,7 @@ class DofusGuideOverlay(Overlay):
                 get_rounded_rectangle_coords(0, 0, w, self.width, 23)
             )
         else:  # Orientation verticale
-            h = self.get_position(len(self.order))[1] - 15
+            h = self.get_position(len(self.order))[1] - int(self.head_width/2)
             self.geometry(f"{self.width}x{h}")
             self.canvas.config(width=self.width, height=h)
             self.canvas.coords(
@@ -132,7 +142,7 @@ class DofusGuideOverlay(Overlay):
                 if position:
                     x, y = position
                     # Coordonner les sommets du chevron (triangle orienté vers la droite)
-                    decal_x = 24
+                    decal_x = self.head_width/2 +12
                     
                     points1 = [
                         x + decal_x, y
@@ -143,7 +153,7 @@ class DofusGuideOverlay(Overlay):
                 if position:
                     x, y = position
                     # Coordonner les sommets du chevron (triangle orienté vers le bas)
-                    decal_y = 24
+                    decal_y = self.head_width/2 +12
                     
                     points1 = [
                         x, y + decal_y
@@ -331,9 +341,9 @@ class DofusGuideOverlay(Overlay):
             
     def get_position(self, indice):
         if self.orientation == "horizontal":
-            return (60 + (self.head_width + 10) * indice, 17)  # Disposition en ligne
+            return (48 + int(self.head_width/2) + (self.head_width + 10) * indice, 5+self.head_width/2)  # Disposition en ligne
         else:  # Orientation verticale par défaut
-            return (17, 51 + (self.head_width + 10) * indice)
+            return (5+self.head_width/2, 39+int(self.head_width/2) + (self.head_width + 10) * indice)
     
     def select(self, indice):
         if self.open_dofus_methode:
@@ -407,7 +417,7 @@ def get_rounded_rectangle_coords(x1, y1, x2, y2, radius):
     ]
     return [coord for point in points for coord in point]  # Aplatir les tuples
 
-def dessiner_chevron(canvas, x, y, orientation="vertical"):
+def dessiner_chevron(canvas, x, y, orientation="vertical", size=12):
     """Dessine un chevron `<` sur un Canvas."""
     if orientation == "vertical":
         return canvas.create_text(x, y, text="<", fill="white", font=(font.families()[1], 12, "bold"), state="hidden")
@@ -470,6 +480,6 @@ if __name__ == "__main__":
     with open("ressources/config.json",encoding="utf-8") as file:
         config = json.load(file)
         
-    ihm = DofusGuideOverlay(config, pages_dofus, orientation="horizontal")
+    ihm = DofusGuideOverlay(config, pages_dofus, orientation=0)
     # ihm = DofusGuideOverlay(config, pages_dofus, orientation="vertical")
     ihm.mainloop()

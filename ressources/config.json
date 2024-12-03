@@ -20,6 +20,7 @@
         "auto-actualisation": 1,
         "auto-disparition": 0,
         "opacity": 0.8,
-        "horizontal": 0
+        "horizontal": 1,
+        "icon_width": 25
     }
 }
