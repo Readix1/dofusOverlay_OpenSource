@@ -7,7 +7,7 @@
         "stop": "f12",
         "next_win": "tab",
         "prev_win": "shift+tab",
-        "next_turn": "space",
+        "next_turn": "",
         "focus_dofus": "f13",
         "reorganizer": "f11",
         "actualise": "f4",

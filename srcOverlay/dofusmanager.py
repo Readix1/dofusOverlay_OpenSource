@@ -152,6 +152,8 @@ class DofusManager(Observer):
                 key_name = str(key.char)
         
         # print(key_name, key_name=="",self.shortcut_dict)
+        if key_name == "":
+            return self.running
         if key_name == "shift" or "ctrl"in key_name:
             self.current=0
         else:
