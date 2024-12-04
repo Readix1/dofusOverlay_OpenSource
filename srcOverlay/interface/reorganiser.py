@@ -106,12 +106,20 @@ class Reorganiser(CTkToplevel):
         
         self.next_button = CTkButton(raccourci_frame, text="Suivant", command=self.update_next_shortcut, image=self.next, compound="right")
         self.next_button.grid(row=0, column=1,  pady=10, padx=(0, 10))
+        
+        self.macro_button = CTkButton(raccourci_frame, text="Macro", command=self.update_macro_shortcut)
+        self.macro_button.grid(row=1, column=1, padx=(0, 10), pady=10)
+
+        self.next_turn_button = CTkButton(raccourci_frame, text="Tour suivant", command=self.update_next_turn_shortcut)
+        self.next_turn_button.grid(row=2, column=1, padx=(0, 10), pady=10)
 
         if self.dh:
             shortcuts = self.dh.get_shortcut()
             
             self.update_previous_button(shortcuts[0])
             self.update_next_button(shortcuts[1])
+            self.update_macro_button(shortcuts[2])
+            self.update_next_turn_button(shortcuts[3])
         
                 
         self.create_table()
@@ -127,30 +135,43 @@ class Reorganiser(CTkToplevel):
     def update_next_button(self, shortcut):
         self.next_button.configure(text=shortcut)
         
-    def update_previous_shortcut(self):
-        self.previous_button.configure(text="")
+    def update_macro_button(self, shortcut):
+        self.macro_button.configure(text=shortcut)
 
+    def update_next_turn_button(self, shortcut):
+        self.next_turn_button.configure(text=shortcut)
+        
+    def update_previous_shortcut(self):
         # Démarrer un listener pour écouter les touches du clavier
-        self.start_update_shortcut_listener(self.previous_button, "prev_win")
+        if self.start_update_shortcut_listener(self.previous_button, "prev_win"):
+            self.previous_button.configure(text="")
             
     
     def update_next_shortcut(self):
-        self.next_button.configure(text="")
-
         # Démarrer un listener pour écouter les touches du clavier
-        self.start_update_shortcut_listener(self.next_button, "next_win")
+        if self.start_update_shortcut_listener(self.next_button, "next_win"):
+            self.next_button.configure(text="")
+            
+        
+    def update_macro_shortcut(self):
+        # Démarrer un listener pour écouter les touches du clavier
+        if self.start_update_shortcut_listener(self.macro_button, "macro_clic_next_win"):
+            self.macro_button.configure(text="")
+        
+    def update_next_turn_shortcut(self):
+        # Démarrer un listener pour écouter les touches du clavier
+        if self.start_update_shortcut_listener(self.next_turn_button, "next_turn"):
+            self.next_turn_button.configure(text="")
         
     def update_specific_shortcut(self, button, shortcut_attr_name):
-        button.configure(text="")
-        
         # Démarrer un listener pour écouter les touches du clavier
-        self.start_update_shortcut_listener(button, shortcut_attr_name, specific_page=True)
+        if self.start_update_shortcut_listener(button, shortcut_attr_name, specific_page=True):
+            button.configure(text="")
     
     def start_update_shortcut_listener(self, button, shortcut_attr_name, specific_page=False):
-        
         if self.listeners_active==True:
             print("Listeners déjà actifs. Ignorer la réactivation.")
-            return
+            return False
         
         self.listeners_active = True
         
@@ -217,10 +238,7 @@ class Reorganiser(CTkToplevel):
                             setattr(self, shortcut_attr_name, shortcut_name)
                             button.configure(text=shortcut_name)
                             if self.dh:
-                                if shortcut_name and "next" in shortcut_attr_name:
-                                    self.dh.update_shortcut("next_win", shortcut_name)
-                                else:
-                                    self.dh.update_shortcut("prev_win", shortcut_name)
+                                self.dh.update_shortcut(shortcut_attr_name, shortcut_name)
                         else:
                             for dofus in self.pages_dofus:
                                 if dofus.name == shortcut_attr_name:
@@ -252,10 +270,7 @@ class Reorganiser(CTkToplevel):
                         setattr(self, shortcut_attr_name, shortcut_name)
                         button.configure(text=shortcut_name)
                         if self.dh:
-                            if shortcut_name and "next" in shortcut_attr_name:
-                                self.dh.update_shortcut("next_win", shortcut_name)
-                            else:
-                                self.dh.update_shortcut("prev_win", shortcut_name)
+                            self.dh.update_shortcut(shortcut_attr_name, shortcut_name)
                     else:
                         for dofus in self.pages_dofus:
                             if dofus.name == shortcut_attr_name:
@@ -271,6 +286,7 @@ class Reorganiser(CTkToplevel):
         start_keyboard_listener()
 
         start_mouse_listener()
+        return True
     
     def actualise(self):
         self.pages_dofus = sorted(self.dh.dofus, key=lambda x: x.ini, reverse=True)

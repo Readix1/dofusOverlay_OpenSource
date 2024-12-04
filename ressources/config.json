@@ -6,8 +6,8 @@
     "keyboard_bindings": {
         "stop": "f12",
         "next_win": "tab",
-        "prev_win": "x2",
-        "next_turn": "f1",
+        "prev_win": "shift+tab",
+        "next_turn": "space",
         "focus_dofus": "f13",
         "reorganizer": "f11",
         "actualise": "f4",

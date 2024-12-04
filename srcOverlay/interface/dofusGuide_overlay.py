@@ -430,42 +430,6 @@ def get_image_path(classe="iop"):
     return "icons/1004.png"
     
 
-# def get_image_path(type="head", classe="iop", sexe=0, head=1):
-#     prefixes_dict = {"head":"heads/", "icon":"icons/", "symbol":"symbols/symbol_", "head_char":"head_char/mini_",
-#                "char":"char/", "compagnon_char":"compagnon/big_", "compagnon":"compagnon/square_"}
-    
-#     gender = 1 if sexe=="femelle" else 0
-#     classe = classe.lower()
-    
-#     prefix=""
-#     sufix=""
-#     if type in prefixes_dict:
-#         prefix += prefixes_dict[type]
-    
-#     if type=="head":
-#         if classe in dict_head:
-#             sufix = str(dict_head[classe]+gender)+"_"+str(head)+".png"
-            
-#     elif type=="icon":
-#         if classe in dict_head:
-#             sufix = str(dict_head[classe])+".png"
-    
-#     elif type=="symbol":
-#         sufix = str(int(dict_head[classe]/10))+".png"
-        
-#     elif type=="head_char" or type=="char":
-#         sufix = f"{int(dict_head[classe]/10)}_{gender}.png"
-        
-#     elif type=="compagnon_char" or type=="compagnon":
-#         sufix = f"{head}." + ("png" if type=="compagnon" else "jpg")
-            
-#     if not sufix:
-#         prefix=""
-#         sufix="icons/1004.png"
-    
-#     return prefix + sufix
-    
-
 if __name__ == "__main__":
     import json
     from srcOverlay.Page_Dofus import Page_Dofus

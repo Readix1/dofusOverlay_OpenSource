@@ -13,13 +13,17 @@ import logging
 from pynput import mouse as ppmouse
 
 import queue
+import threading
 
 import ctypes
 
 user32 = ctypes.windll.user32
+VK_SHIFT = 0x10
+VK_CONTROL = 0x11
+KEYEVENTF_KEYUP = 0x0002
 
-
-import threading
+MOUSEEVENTF_LEFTDOWN = 0x0002
+MOUSEEVENTF_LEFTUP = 0x0004
 
 class DofusManager(Observer):
     def __init__(self, config, dofus_handler):
@@ -112,11 +116,12 @@ class DofusManager(Observer):
     
     def update_shortcut(self, shortcut_name, shortcut, specific_page=False):
         if specific_page==False:
-            del self.shortcut_dict[self.config["keyboard_bindings"][shortcut_name]]
+            if self.config["keyboard_bindings"][shortcut_name] in self.shortcut_dict:
+                del self.shortcut_dict[self.config["keyboard_bindings"][shortcut_name]]
             self.shortcut_dict[shortcut] = self.func_correspondance(shortcut_name)
             self.config["keyboard_bindings"][shortcut_name] = shortcut
         else:
-            if shortcut_name in self.specific_shortcut:
+            if shortcut_name in self.specific_shortcut and self.specific_shortcut[shortcut_name] in self.shortcut_dict:
                 del self.shortcut_dict[self.specific_shortcut[shortcut_name]]
             self.shortcut_dict[shortcut] = self.func_correspondance(None, shortcut_name)
             self.specific_shortcut[shortcut_name] = shortcut
@@ -136,6 +141,7 @@ class DofusManager(Observer):
             
     def on_release(self,key):
         key_name = ""
+        current = self.current
         if '_name_' in key.__dict__ :
             key_name = key.name
         elif key.char:
@@ -145,17 +151,27 @@ class DofusManager(Observer):
             else:
                 key_name = str(key.char)
         
+        # print(key_name, key_name=="",self.shortcut_dict)
         if key_name == "shift" or "ctrl"in key_name:
             self.current=0
         else:
-            if self.current==1:
+            if current==1:
                 key_name = "shift+" + key_name
-            elif self.current==2:
+                user32.keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0)
+            elif current==2:
                 key_name = "ctrl+" + key_name
-                
+                user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+            
             if key_name in self.shortcut_dict:
+                # print(self.shortcut_dict[key_name])
                 self.shortcut_dict[key_name]()
-        
+                
+            if current==1:
+                user32.keybd_event(VK_SHIFT, 0, "0x0000", 0)
+            elif current==2:
+                user32.keybd_event(VK_CONTROL, 0, "0x0000", 0)
+                
+            
         return self.running
     
 
@@ -166,12 +182,15 @@ class DofusManager(Observer):
             
         temp_config["keyboard_bindings"]['prev_win'] = self.config["keyboard_bindings"]['prev_win']
         temp_config["keyboard_bindings"]['next_win'] = self.config["keyboard_bindings"]['next_win']
+        temp_config["keyboard_bindings"]['macro_clic_next_win'] = self.config["keyboard_bindings"]['macro_clic_next_win']
+        temp_config["keyboard_bindings"]['next_turn'] = self.config["keyboard_bindings"]['next_turn']
         
         with open("ressources/config.json", 'w') as file:
             json.dump(temp_config, file, indent=4)
             
     def get_shortcut(self, ):
-        return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win']
+        return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win'], \
+            self.config["keyboard_bindings"]['macro_clic_next_win'], self.config["keyboard_bindings"]['next_turn']
 
 
 
@@ -217,8 +236,7 @@ class DofusManager(Observer):
     
 def click_mouse():
     # Codes d'événement de clic pour Windows
-    MOUSEEVENTF_LEFTDOWN = 0x0002
-    MOUSEEVENTF_LEFTUP = 0x0004
+    
 
     user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)  # Appuyer sur le bouton gauche
     time.sleep(0.05)  # Petite pause pour simuler un clic humain
