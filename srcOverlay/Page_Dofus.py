@@ -7,6 +7,7 @@ import pythoncom
 import pywintypes
 import win32com.client
 import time
+import threading
 
 from srcOverlay.information import Information 
 
@@ -25,6 +26,7 @@ class Page_Dofus():
         
         logging.info(f"nom: {self.name}, hwnd: {hwnd}")
         self.handler = handler
+        self.lock = threading.Lock()
         
     def serialize(self):
         if self.name == "":
@@ -76,6 +78,28 @@ class Page_Dofus():
             logging.error(f"Error when open {self.name} {e}")
             return
         
+    def click(self):
+        """A ne pas utiliser avant l'aval d'ankama
+
+        Args:
+            x (_type_): _description_
+            y (_type_): _description_
+            pause (float, optional): _description_. Defaults to 0.3.
+            manyTry (bool, optional): _description_. Defaults to False.
+        """
+        with self.lock:
+            x,y = win32gui.GetCursorPos()
+            curr_h = win32gui.GetForegroundWindow()
+            realx,realy = win32gui.ScreenToClient(curr_h,(x,y))
+            lParam = win32api.MAKELONG(realx,realy)
+            win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
+            time.sleep(0.01)
+            win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP, None, lParam)
+            
+            # time.sleep(0)
+            
+            logging.info(f"click de {self.name}, coord: {x}, {y}")
+            
         
         
     def __str__(self):

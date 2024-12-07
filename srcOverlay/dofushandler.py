@@ -81,6 +81,9 @@ class DofusHandler(Thread,Observer):
         
         self.open_index_dofus(index)
         
+    def click_current_page(self):
+        self.dofus[self.current_shown].click()
+        
     def open_previous_page(self):
         selected = self.get_selected_pages()
         if len(selected) == 0:

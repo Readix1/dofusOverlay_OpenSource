@@ -201,8 +201,10 @@ class DofusManager(Observer):
         with self.lock:
             if(self.allow_event()):
                 # self.mouse.click(ppmouse.Button.left, 1)
-                click_mouse()
+                # click_mouse()
+                self.dofus_handler.click_current_page()
                 self._switch_next_win()
+                # time.sleep(0.2)
             
     def allow_event(self):
         tmp = win32gui.GetForegroundWindow()
@@ -241,7 +243,7 @@ def click_mouse():
     
 
     user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)  # Appuyer sur le bouton gauche
-    time.sleep(0.05)  # Petite pause pour simuler un clic humain
+    time.sleep(0.03)  # Petite pause pour simuler un clic humain
     user32.mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)  # Relâcher le bouton gauche
 
  
