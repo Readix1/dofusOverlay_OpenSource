@@ -11,7 +11,7 @@
     },
     "Reedix": {
         "classe": "eliotrope",
-        "ini": 8,
+        "ini": 1,
         "image_path": "ressources\\img_overlay\\heads/31_1.png"
     },
     "Tc-arc": {
@@ -21,7 +21,7 @@
     },
     "Indimo": {
         "classe": "iop",
-        "ini": 4,
+        "ini": 3,
         "image_path": "ressources\\img_overlay\\heads/90_1.png"
     },
     "Divahle": {
@@ -53,8 +53,9 @@
     },
     "Readix": {
         "classe": "Iop",
-        "ini": 1,
-        "image_path": "ressources\\img_overlay\\heads/130_1.png"
+        "ini": 8,
+        "image_path": "ressources\\img_overlay\\heads/130_1.png",
+        "shortcut": "f14"
     },
     "Ganna": {
         "classe": "Pandawa",
@@ -93,27 +94,27 @@
     },
     "Shyv": {
         "classe": "Forgelance",
-        "ini": 6,
+        "ini": 5,
         "image_path": "ressources\\img_overlay\\heads/201_1.png"
     },
     "Dyv": {
         "classe": "Pandawa",
-        "ini": 2,
+        "ini": 6,
         "image_path": "ressources\\img_overlay\\heads/121_1.png"
     },
     "Ryv": {
         "classe": "Eniripsa",
-        "ini": 7,
+        "ini": 4,
         "image_path": "ressources\\img_overlay\\heads/71_1.png"
     },
     "Lyv": {
         "classe": "Zobal",
-        "ini": 5,
+        "ini": 2,
         "image_path": "ressources\\img_overlay\\heads/140_1.png"
     },
     "Read-ic": {
         "classe": "Pandawa",
-        "ini": 3,
+        "ini": 7,
         "image_path": "ressources\\img_overlay\\heads/121_1.png"
     }
 }

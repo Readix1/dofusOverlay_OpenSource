@@ -231,6 +231,8 @@ class DofusGuideOverlay(Overlay):
         label_avatar.bind("<ButtonPress-1>", lambda e, i=indice: self.start_drag(e, i, window_id))
         label_avatar.bind("<B1-Motion>", lambda e, dofus=dofus : self.drag(e, dofus))
         label_avatar.bind("<ButtonRelease-1>", lambda e: self.stop_drag(e))
+        
+        self.update_selected_status(dofus)
 
         label_avatar.config(cursor="hand2")
         
