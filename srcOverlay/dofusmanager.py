@@ -150,12 +150,16 @@ class DofusManager(Observer):
                 key_name = key_char
             else:
                 key_name = str(key.char)
+                
+        print(key_name)
         
         # print(key_name, key_name=="",self.shortcut_dict)
         if key_name == "":
             return self.running
         if key_name == "shift" or "ctrl"in key_name:
             self.current=0
+        elif key_name == "alt_gr":
+            user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
         else:
             if current==1:
                 key_name = "shift+" + key_name
