@@ -14,7 +14,7 @@
         "macro_clic_next_win": "x1"
     },
     "overlay": {
-        "posx": 0,
+        "posx": 160,
         "posy": 0,
         "afficher_overlay": 1,
         "auto-actualisation": 1,

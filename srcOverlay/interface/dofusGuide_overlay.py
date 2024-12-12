@@ -23,7 +23,7 @@ class DofusGuideOverlay(Overlay):
         width = 50
         height = 400
         
-        Overlay.__init__(self, 25, 100, x=width, y=height, alpha=1)
+        Overlay.__init__(self, config["overlay"]["posx"], config["overlay"]["posy"], x=width, y=height, alpha=1)
         self.bind("<<Destroy>>", lambda e: self.destroy())
         
         self.height = height

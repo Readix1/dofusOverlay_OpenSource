@@ -21,8 +21,9 @@
     },
     "Indimo": {
         "classe": "iop",
-        "ini": 3,
-        "image_path": "ressources\\img_overlay\\heads/90_1.png"
+        "ini": 8,
+        "image_path": "ressources\\img_overlay\\heads/90_1.png",
+        "shortcut": "f14"
     },
     "Divahle": {
         "classe": "Feca",
@@ -53,9 +54,8 @@
     },
     "Readix": {
         "classe": "Iop",
-        "ini": 8,
-        "image_path": "ressources\\img_overlay\\heads/130_1.png",
-        "shortcut": "f14"
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\heads/130_1.png"
     },
     "Ganna": {
         "classe": "Pandawa",
@@ -104,7 +104,7 @@
     },
     "Ryv": {
         "classe": "Eniripsa",
-        "ini": 4,
+        "ini": 3,
         "image_path": "ressources\\img_overlay\\heads/71_1.png"
     },
     "Lyv": {
