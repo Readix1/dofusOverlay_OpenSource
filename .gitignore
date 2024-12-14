@@ -2,8 +2,11 @@ __pycache__/
 *.pyc
 
 ressources/img/
+ressources/img_overlay/
 
 .env/
 output/
 exe/
 dofusOverlay/
+
+keep_active.py

@@ -1,35 +1,34 @@
 from srcOverlay.interface.overlay import Overlay
-from srcOverlay.interface.initiative_ihm import Initiative_ihm
+from srcOverlay.interface.reorganiser import Reorganiser
 
 from threading import RLock
 import tkinter as tk
 from PIL import Image,ImageTk
-import win32gui
-import win32com
-import pythoncom
-
 
 class DofusOverlay(Overlay):
-    def __init__(self,config, order, order_name, dh=None):
+    def __init__(self, config, order, open_dofus_methode=None, dh=None):
         Overlay.__init__(self, config["overlay"]['posx'],config["overlay"]["posy"], alpha=config["overlay"]['opacity'])
         self.bind("<<Destroy>>", lambda e: self.destroy())
-        self.imagePath = {k:config['img']['path']+v['classe']+'_'+v['sexe']+".png" for k,v in config['img'].items() if k != 'path'}
         self.perso = dict()
-        self.unselected_perso=[]
         self.order = []
+        self.hwnds = []
+        
+        
         self.lock = RLock()
+        self.config_json = config
         
         self.reorganise = None
         
         self.frame_perso = tk.Frame(self, background="white")
         self.frame_perso.pack(side="left",padx=0, pady=0)
         
-        self.curr_hwnd = 0
+        self.current_shown = 0
         
-        self.update_order(order,order_name)
+        self.update_order(order)
         
         self.is_visible = True
         
+        self.open_dofus_methode=open_dofus_methode
         self.dh = dh
         
         
@@ -37,32 +36,25 @@ class DofusOverlay(Overlay):
         self.event_generate("<<Destroy>>", when="tail")
     
     def getHwnd(self):        
+        if self.reorganise:
+            return [int(self.frame(),base=16), int(self.reorganise.frame(),base=16)]
         return [int(self.frame(),base=16)]
     
-    def update_perso(self,hwnd):
+    def update_perso(self, indice):
         self.lock.acquire()
-        for h in self.perso:
-            if(h==hwnd):
-                self.perso[h].config(borderwidth=2, relief="solid")
+        for i, dofus in enumerate(self.order):
+            if(i==indice):
+                self.perso[dofus].config(borderwidth=2, relief="solid")
 
             else:
-                self.perso[h].config(borderwidth=2, relief="flat")
+                self.perso[dofus].config(borderwidth=2, relief="flat")
 
-        self.curr_hwnd = hwnd
+        self.current_shown = indice
         self.lock.release()
         
-    def update_perso_and_visibility(self,hwnd):
+    def update_visibility(self, hwnd):
         self.lock.acquire()
-        if hwnd in list(self.perso.keys()):
-            if hwnd != self.curr_hwnd:
-                for h in self.perso:
-                    if(h==hwnd):
-                        self.perso[h].config(borderwidth=2, relief="solid")
-                    else:
-                        self.perso[h].config(borderwidth=2, relief="flat")
-                        
-                self.curr_hwnd = hwnd
-        if hwnd in list(self.perso.keys())+self.getHwnd():
+        if hwnd in self.hwnds+self.getHwnd():
             if not self.is_visible:
                 self.deiconify()
                 self.is_visible = True
@@ -72,13 +64,12 @@ class DofusOverlay(Overlay):
             self.is_visible = False
         self.lock.release()
 
-    def update_order(self, order, order_name):
+    def update_order(self, order):
         self.lock.acquire()
-        if(self.order == order_name):
-            self.lock.release()
-            return
-        self.order = order_name
-        self.perso = dict()
+
+        self.order = order
+        self.hwnds = [d.hwnd for d in order]
+        
         lorder = len(order)
         l = lorder * 84
         h = 84
@@ -90,45 +81,43 @@ class DofusOverlay(Overlay):
         self.frame_perso.config(width=1)
         
         #building new
-        for hwnd,n in zip(order, order_name):
-            if(n not in self.imagePath):
-                n = ""
-            path = self.imagePath[n]
-            img = ImageTk.PhotoImage(Image.open(path).resize((70,70)))
-            f = tk.Label(self.frame_perso,image=img, background="white")
-            f.bind("<Button-1>", lambda e,hid=hwnd : self.select(hid))
-            f.bind("<Control-1>", lambda e, hid=hwnd : self.select_char(hid))
-            f.image = img
-            f.pack(side="left",padx=5, pady=5)
-            self.perso[hwnd] = f
+        for i, dofus in enumerate(order):
+            self.create_image(dofus, i)
         
-        self.update_perso(self.curr_hwnd)
+        self.update_perso(self.current_shown)
         self.update()
         self.lock.release()
+        
+    def create_image(self, dofus, indice):
+
+        if dofus.classe:
+            path = self.config_json['img']['path']+dofus.classe+'_'+dofus.sexe+".png"
+        else:
+            path = self.config_json['img']['path']+"autre_0.png"
+        img = ImageTk.PhotoImage(Image.open(path).resize((70,70)))
+        f = tk.Label(self.frame_perso,image=img, background="white")
+        f.bind("<Button-1>", lambda e, indice=indice : self.select(indice))
+        f.bind("<Control-1>", lambda e, dofus=dofus : self.select_char(dofus))
+        f.image = img
+        f.pack(side="left",padx=5, pady=5)
+        self.perso[dofus] = f
     
-    def open_reorganize(self, order, order_name):
+    def open_reorganize(self, order):
         print("open_reorganize")
         if not self.reorganise:
-            self.reorganise = Initiative_ihm(order, order_name, self)
+            self.reorganise = Reorganiser(order, self, self.dh)
             
     
-    def select_char(self, hwnd):
-        if hwnd in self.unselected_perso:
-            self.unselected_perso.remove(hwnd)
-            self.perso[hwnd].config(background="white")
+    def select_char(self, dofus):
+        dofus.selected = not dofus.selected
+        
+        if dofus.selected:
+            self.perso[dofus].config(background="white")
         else:
-            self.unselected_perso.append(hwnd)
-            self.perso[hwnd].config(background="grey")
+            self.perso[dofus].config(background="grey")
     
-    def get_selected_pages(self):
-        return [hwnd for hwnd in self.perso if hwnd not in self.unselected_perso]
-    
-    def select(self,hwnd):
-        pythoncom.CoInitialize()
-        win32gui.SetForegroundWindow(hwnd)
-        shell = win32com.client.Dispatch("WScript.Shell")
-        shell.SendKeys('^')
-        win32gui.ShowWindow(self.hwnd,3)
-        self.update_perso(hwnd)
+    def select(self, indice):
+        if self.open_dofus_methode:
+            self.open_dofus_methode(indice)
 
         

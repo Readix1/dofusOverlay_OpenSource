@@ -4,16 +4,18 @@ import win32gui
 import logging
 
 class Listener(Thread):
-    def __init__(self,manager,interface):
+    def __init__(self, dh):
         Thread.__init__(self)
         
-        self.manager = manager
-        self.interface = interface
+        self.dh = dh
+        self.current_hwnd = None
         
     def run(self):
-        while self.manager.running:
+        while self.dh.running:
             hwnd = win32gui.GetForegroundWindow()
-            self.interface.update_perso_and_visibility(hwnd)
+            if hwnd != self.current_hwnd:
+                self.current_hwnd = hwnd
+                self.dh.update_shown(hwnd)
             time.sleep(0.3)
         logging.info("Listener stopped")
         
