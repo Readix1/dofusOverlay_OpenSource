@@ -474,6 +474,7 @@ class Reorganiser(CTkToplevel):
 
 
     def save(self):
+        self.enter()
         if self.dh:
             self.dh.save_dofus_info()
     

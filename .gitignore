@@ -8,3 +8,5 @@ ressources/img_overlay/
 output/
 exe/
 dofusOverlay/
+
+keep_active.py
