@@ -2,5 +2,5 @@
 set PYTHONPATH=%PYTHONPATH%;.
 cd ..
 call .\env\Scripts\activate.bat
-python main.py --nodebug
+python dofusOverlay3.py --nodebug
 pause
