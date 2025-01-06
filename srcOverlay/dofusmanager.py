@@ -151,8 +151,6 @@ class DofusManager(Observer):
             else:
                 key_name = str(key.char)
                 
-        print(key_name)
-        
         # print(key_name, key_name=="",self.shortcut_dict)
         if key_name == "":
             return self.running

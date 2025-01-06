@@ -91,20 +91,21 @@ class DofusGuideOverlay(Overlay):
     def resize(self):
         if self.orientation == "horizontal":
             w = self.get_position(len(self.order))[0] - int(self.head_width/2)
-            self.geometry(f"{w}x{self.width}")
             self.canvas.config(width=w, height=self.width)
             self.canvas.coords(
                 self.rect_bg,
                 get_rounded_rectangle_coords(0, 0, w, self.width, 23)
             )
+            self.geometry(f"{w}x{self.width}")
         else:  # Orientation verticale
             h = self.get_position(len(self.order))[1] - int(self.head_width/2)
-            self.geometry(f"{self.width}x{h}")
             self.canvas.config(width=self.width, height=h)
             self.canvas.coords(
                 self.rect_bg,
                 get_rounded_rectangle_coords(0, 0, self.width, h, 23)
             )
+            self.geometry(f"{self.width}x{h}")
+            
     
         
     def dragwin(self, event):
@@ -342,10 +343,13 @@ class DofusGuideOverlay(Overlay):
             self.perso[dofus].config(background="grey")
             
     def get_position(self, indice):
+        indice = indice if indice else 0
+        
         if self.orientation == "horizontal":
             return (48 + int(self.head_width/2) + (self.head_width + 10) * indice, 5+self.head_width/2)  # Disposition en ligne
         else:  # Orientation verticale par défaut
             return (5+self.head_width/2, 39+int(self.head_width/2) + (self.head_width + 10) * indice)
+                
     
     def select(self, indice):
         if self.open_dofus_methode:
