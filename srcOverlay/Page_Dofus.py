@@ -12,7 +12,7 @@ import threading
 from srcOverlay.information import Information 
 
 class Page_Dofus():
-    def __init__(self, hwnd, handler=None,ini=0):
+    def __init__(self, hwnd, handler=None,ini=0, char="*"):
         self.hwnd = hwnd
         _,self.pid = win32process.GetWindowThreadProcessId(hwnd)
         
@@ -21,6 +21,7 @@ class Page_Dofus():
         self.image_path = ""
         self.shortcut = ""
         self.ini = ini
+        self.char=char
         
         self.selected = True
         
@@ -71,7 +72,7 @@ class Page_Dofus():
         try :
             pythoncom.CoInitialize()
             shell = win32com.client.Dispatch("WScript.Shell")
-            shell.SendKeys('*')
+            shell.SendKeys(self.char)
             win32gui.ShowWindow(self.hwnd,3)
             win32gui.SetForegroundWindow(self.hwnd)
         except pywintypes.error as e :

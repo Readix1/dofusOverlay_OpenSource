@@ -2,8 +2,6 @@ import time
 
 start_time = time.time()
 from srcOverlay.dofushandler import DofusHandler
-print("fin import DofusHandler --- %s seconds ---" % (time.time() - start_time))
-# print("fin import DofusHandler")
 from srcOverlay.listener import Listener
 from srcOverlay.dofusmanager import DofusManager
 from srcOverlay.interface.dofus_overlay import DofusOverlay
@@ -12,6 +10,8 @@ import logging
 import json 
 import argparse
 import sys
+print("fin import --- %s seconds ---" % (time.time() - start_time))
+
 
 DEFAULT_LEVEL_LOGGING = logging.INFO
 
@@ -29,7 +29,7 @@ else:
 with open("ressources/config.json",encoding="utf-8") as file:
     config = json.load(file)
 
-dh = DofusHandler()
+dh = DofusHandler(char=config["swap_char"]["used"])
 if config["overlay"]["auto-actualisation"]:
     dh.start()
 dm = DofusManager(config, dh)
