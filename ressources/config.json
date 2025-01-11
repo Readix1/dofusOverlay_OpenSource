@@ -14,7 +14,7 @@
         "macro_clic_next_win": "x1"
     },
     "swap_char": {
-        "used" : "\\",
+        "used" : "*",
         "for_azerty": "*",
         "for_qwerty": "\\"
 
