@@ -18,14 +18,13 @@ class DofusHandler(Thread,Observer):
     
     event : update_order
     """
-    def __init__(self, char="*"):
+    def __init__(self):
         Thread.__init__(self)
         Observer.__init__(self,["update_order", "getHwnd", "reorganise", "update_shortcut", "save_button", "get_shortcut",
                                 "update_shown_page", "update_visible", "stop"])  
         self.running = True
-        self.char=char
         
-        self.dofus = sorted([Page_Dofus(hwnd, self, char=self.char) for hwnd in self._get_win()], key=lambda x: x.ini, reverse=True)
+        self.dofus = sorted([Page_Dofus(hwnd, self) for hwnd in self._get_win()], key=lambda x: x.ini, reverse=True)
         
         self.curr_hwnd = 0
         self.current_shown = 0
@@ -151,7 +150,7 @@ class DofusHandler(Thread,Observer):
     def add_win(self,hwnd):
         with self.lock:
             if hwnd not in self.get_hwnds():
-                page = Page_Dofus(hwnd, self, char=self.char)
+                page = Page_Dofus(hwnd, self)
                 self.dofus.append(page)
                 self.notify("update_order", self.dofus)
                 return True

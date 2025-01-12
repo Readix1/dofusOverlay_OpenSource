@@ -12,7 +12,7 @@ import threading
 from srcOverlay.information import Information 
 
 class Page_Dofus():
-    def __init__(self, hwnd, handler=None,ini=0, char="*"):
+    def __init__(self, hwnd, handler=None,ini=0):
         self.hwnd = hwnd
         _,self.pid = win32process.GetWindowThreadProcessId(hwnd)
         
@@ -21,7 +21,6 @@ class Page_Dofus():
         self.image_path = ""
         self.shortcut = ""
         self.ini = ini
-        self.char=char
         
         self.selected = True
         

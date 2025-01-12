@@ -29,7 +29,7 @@ else:
 with open("ressources/config.json",encoding="utf-8") as file:
     config = json.load(file)
 
-dh = DofusHandler(char=config["swap_char"]["used"])
+dh = DofusHandler()
 if config["overlay"]["auto-actualisation"]:
     dh.start()
 dm = DofusManager(config, dh)

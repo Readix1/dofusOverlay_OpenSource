@@ -13,12 +13,6 @@
         "actualise": "f4",
         "macro_clic_next_win": "x1"
     },
-    "swap_char": {
-        "used" : "*",
-        "for_azerty": "*",
-        "for_qwerty": "\\"
-
-    },
     "overlay": {
         "posx": 160,
         "posy": 0,
