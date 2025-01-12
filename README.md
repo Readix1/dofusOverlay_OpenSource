@@ -12,7 +12,7 @@ Cette nouvelle version de l'overlay est une copie du organizer de dofusguide ave
 
 ## Installation:
 
-- Téléchargez dofusOverlay.zip de la dernière release située à droite : [Release v3.0](https://github.com/Readix1/dofusOverlay_OpenSource/releases/tag/v3.0)
+- Téléchargez dofusOverlay.zip de la dernière release située à droite : [Release v3.3](https://github.com/Readix1/dofusOverlay_OpenSource/releases/tag/v3.3)
 - Dézipez le dossier
 - Exécutez dofusOverlay.exe (il est possible que le logiciel ne soit pas reconnu par windows et que cela demande une autorisation)
 
