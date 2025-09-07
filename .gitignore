@@ -10,3 +10,5 @@ exe/
 dofusOverlay/
 
 keep_active.py
+
+tests/

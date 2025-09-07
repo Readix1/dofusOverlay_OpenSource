@@ -107,21 +107,36 @@ class Reorganiser(CTkToplevel):
         self.next_button = CTkButton(raccourci_frame, text="Suivant", command=self.update_next_shortcut, image=self.next, compound="right")
         self.next_button.grid(row=0, column=1,  pady=10, padx=(0, 10))
         
+        
+        
+        label = CTkLabel(raccourci_frame, text="Clic & Suivant :", font=("Arial", 12),)
+        label.grid(row=1, column=0, padx=(0, 10), pady=10)
+        
         self.macro_button = CTkButton(raccourci_frame, text="Macro", command=self.update_macro_shortcut)
         self.macro_button.grid(row=1, column=1, padx=(0, 10), pady=10)
+        
+        label = CTkLabel(raccourci_frame, text="Tour suivant :", font=("Arial", 12),)
+        label.grid(row=2, column=0, padx=(0, 10), pady=10)
 
         self.next_turn_button = CTkButton(raccourci_frame, text="Tour suivant", command=self.update_next_turn_shortcut)
         self.next_turn_button.grid(row=2, column=1, padx=(0, 10), pady=10)
+        
+        
+        label = CTkLabel(raccourci_frame, text="Invite tous :", font=("Arial", 12),)
+        label.grid(row=3, column=0, padx=(0, 10), pady=10)
+
+        self.invite_all_button = CTkButton(raccourci_frame, text="Invite tous", command=self.update_invite_all_shortcut)
+        self.invite_all_button.grid(row=3, column=1, padx=(0, 10), pady=10)
 
         if self.dh:
             shortcuts = self.dh.get_shortcut()
             
-            self.update_previous_button(shortcuts[0])
-            self.update_next_button(shortcuts[1])
-            self.update_macro_button(shortcuts[2])
-            self.update_next_turn_button(shortcuts[3])
-        
-                
+            self.update_button(self.previous_button, shortcuts[0])
+            self.update_button(self.next_button, shortcuts[1])
+            self.update_button(self.macro_button, shortcuts[2])
+            self.update_button(self.next_turn_button, shortcuts[3])
+            self.update_button(self.invite_all_button, shortcuts[4])
+
         self.create_table()
         
         # Window drag
@@ -129,17 +144,9 @@ class Reorganiser(CTkToplevel):
         self.bind('<B1-Motion>', self.dragwin)
         self.bind('<ButtonRelease-1>', self.release_dragwin)
         
-    def update_previous_button(self, shortcut):
-        self.previous_button.configure(text=shortcut)
         
-    def update_next_button(self, shortcut):
-        self.next_button.configure(text=shortcut)
-        
-    def update_macro_button(self, shortcut):
-        self.macro_button.configure(text=shortcut)
-
-    def update_next_turn_button(self, shortcut):
-        self.next_turn_button.configure(text=shortcut)
+    def update_button(self, button, shortcut):
+        button.configure(text=shortcut)
         
     def update_previous_shortcut(self):
         # Démarrer un listener pour écouter les touches du clavier
@@ -157,15 +164,20 @@ class Reorganiser(CTkToplevel):
         # Démarrer un listener pour écouter les touches du clavier
         if self.start_update_shortcut_listener(self.macro_button, "macro_clic_next_win"):
             self.macro_button.configure(text="")
-        
+
+    def update_invite_all_shortcut(self):
+        # Démarrer un listener pour écouter les touches du clavier
+        if self.start_update_shortcut_listener(self.invite_all_button, "invite_all"):
+            self.invite_all_button.configure(text="")
+
     def update_next_turn_shortcut(self):
         # Démarrer un listener pour écouter les touches du clavier
         if self.start_update_shortcut_listener(self.next_turn_button, "next_turn"):
             self.next_turn_button.configure(text="")
-        
-    def update_specific_shortcut(self, button, shortcut_attr_name):
+
+    def update_specific_shortcut(self, button, shortcut_attr_name, specific_page=False):
         # Démarrer un listener pour écouter les touches du clavier
-        if self.start_update_shortcut_listener(button, shortcut_attr_name, specific_page=True):
+        if self.start_update_shortcut_listener(button, shortcut_attr_name, specific_page=specific_page):
             button.configure(text="")
     
     def start_update_shortcut_listener(self, button, shortcut_attr_name, specific_page=False):
@@ -194,6 +206,10 @@ class Reorganiser(CTkToplevel):
             self.mouse_listener = mouse.Listener(on_click=on_click)
             self.mouse_listener.start()
         
+        # Variables pour stocker la touche pressée en attente de confirmation
+        self.pending_key = None
+        self.pending_shortcut = None
+        
         def on_press(key):
             with self.listener_lock:  # Bloquer l'accès avec le verrou
                 try:
@@ -212,9 +228,7 @@ class Reorganiser(CTkToplevel):
                     elif "ctrl" in key_name:
                         self.current = 2
                     elif key_name == "esc":
-                        # if not specific_page:
-                        #     button.configure(text=getattr(self, shortcut_attr_name))
-                        # else:
+                        # Traitement immédiat pour ESC (suppression du raccourci)
                         if self.dh:
                             self.dh.update_shortcut(shortcut_attr_name, "", specific_page)
                         for dofus in self.pages_dofus:
@@ -226,30 +240,18 @@ class Reorganiser(CTkToplevel):
                         self.current = 0
                         return stop_listeners()
                     else:
+                        # Stocker la touche et le raccourci en attente, ne pas appliquer immédiatement
                         prefix = ""
                         if self.current == 1:
                             prefix += "shift+"
                         elif self.current == 2:
                             prefix += "ctrl+"
 
-                        shortcut_name = prefix + str(key_name)
-
-                        if not specific_page:
-                            setattr(self, shortcut_attr_name, shortcut_name)
-                            button.configure(text=shortcut_name)
-                            if self.dh:
-                                self.dh.update_shortcut(shortcut_attr_name, shortcut_name)
-                        else:
-                            for dofus in self.pages_dofus:
-                                if dofus.name == shortcut_attr_name:
-                                    dofus.shortcut = shortcut_name
-                                    break
-                            button.configure(text=shortcut_name)
-                            if self.dh:
-                                self.dh.update_shortcut(shortcut_attr_name, shortcut_name, specific_page)
-
-                        self.current = 0
-                        return stop_listeners()
+                        self.pending_key = key
+                        self.pending_shortcut = prefix + str(key_name)
+                        
+                        # Afficher temporairement le raccourci en attente
+                        button.configure(text=self.pending_shortcut + " (en attente...)")
 
                 except AttributeError as e:
                     print(f"special key {key}", e)
@@ -257,10 +259,34 @@ class Reorganiser(CTkToplevel):
         
             
         def on_release(key):
-            if '_name_' in key.__dict__ :
-                print(key.name)
-                if key.name == "shift" or "ctrl"in key.name:
-                    self.current=0
+            with self.listener_lock:
+                if '_name_' in key.__dict__:
+                    if key.name == "shift" or "ctrl" in key.name:
+                        self.current = 0
+                        return
+                
+                # Confirmer le raccourci seulement au release si c'est la même touche
+                if self.pending_key and key == self.pending_key:
+                    shortcut_name = self.pending_shortcut
+                    
+                    if not specific_page:
+                        setattr(self, shortcut_attr_name, shortcut_name)
+                        button.configure(text=shortcut_name)
+                        if self.dh:
+                            self.dh.update_shortcut(shortcut_attr_name, shortcut_name)
+                    else:
+                        for dofus in self.pages_dofus:
+                            if dofus.name == shortcut_attr_name:
+                                dofus.shortcut = shortcut_name
+                                break
+                        button.configure(text=shortcut_name)
+                        if self.dh:
+                            self.dh.update_shortcut(shortcut_attr_name, shortcut_name, specific_page)
+
+                    self.current = 0
+                    self.pending_key = None
+                    self.pending_shortcut = None
+                    return stop_listeners()
         
         def on_click(x, y, key, pressed):
             if pressed and ( key.name=="x2" or key.name=="x1" ):
@@ -295,9 +321,8 @@ class Reorganiser(CTkToplevel):
         
         if self.dh:
             shortcuts = self.dh.get_shortcut()
-            
-            self.update_previous_button(shortcuts[0])
-            self.update_next_button(shortcuts[1])
+            self.update_button(self.previous_button, shortcuts[0])
+            self.update_button(self.next_button, shortcuts[1])
         
         
     def create_rows(self):
@@ -363,7 +388,7 @@ class Reorganiser(CTkToplevel):
         shortcut_label = CTkLabel(row_frame, text=shortcut_var.get(), width=120)
         shortcut_label.pack(side="left", padx=5)
 
-        shortcut_label.bind("<Button-1>", lambda event, dofus=dofus, shortcut_label=shortcut_label: self.update_specific_shortcut(shortcut_label, dofus.name))
+        shortcut_label.bind("<Button-1>", lambda event, dofus=dofus, shortcut_label=shortcut_label: self.update_specific_shortcut(shortcut_label, dofus.name, specific_page=True))
 
         # Initiative entry
         ini_var = StringVar(value=dofus.ini)

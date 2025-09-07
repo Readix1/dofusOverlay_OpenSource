@@ -11,7 +11,7 @@
     },
     "Reedix": {
         "classe": "eliotrope",
-        "ini": 2,
+        "ini": 1,
         "image_path": "ressources\\img_overlay\\heads/31_1.png"
     },
     "Tc-arc": {
@@ -21,7 +21,7 @@
     },
     "Indimo": {
         "classe": "iop",
-        "ini": 6,
+        "ini": 5,
         "image_path": "ressources\\img_overlay\\heads/90_1.png",
         "shortcut": "f14"
     },
@@ -38,8 +38,8 @@
         "ini": 0
     },
     "Holexand": {
-        "classe": "",
-        "ini": 0,
+        "classe": "Pandawa",
+        "ini": 2,
         "image_path": "ressources\\img_overlay\\heads/120_1.png"
     },
     "Tc-enutrosor": {
@@ -55,7 +55,7 @@
     "Readix": {
         "classe": "Iop",
         "ini": 5,
-        "image_path": "ressources\\img_overlay\\heads/130_1.png"
+        "image_path": "ressources\\img_overlay\\heads/101_1.png"
     },
     "Ganna": {
         "classe": "Pandawa",
@@ -99,12 +99,12 @@
     },
     "Dyv": {
         "classe": "Pandawa",
-        "ini": 7,
+        "ini": 6,
         "image_path": "ressources\\img_overlay\\heads/121_1.png"
     },
     "Ryv": {
         "classe": "Eniripsa",
-        "ini": 4,
+        "ini": 7,
         "image_path": "ressources\\img_overlay\\heads/71_1.png"
     },
     "Lyv": {
@@ -116,5 +116,85 @@
         "classe": "Pandawa",
         "ini": 8,
         "image_path": "ressources\\img_overlay\\heads/121_1.png"
+    },
+    "Fee-carree": {
+        "classe": "Feca",
+        "ini": 5,
+        "image_path": "ressources\\img_overlay\\heads/11_1.png"
+    },
+    "Kyv": {
+        "classe": "Pandawa",
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\heads/120_1.png"
+    },
+    "Sang-time": {
+        "classe": "Sacrieur",
+        "ini": 7,
+        "image_path": "ressources\\img_overlay\\heads/111_1.png"
+    },
+    "Nyv": {
+        "classe": "Iop",
+        "ini": 2,
+        "image_path": "ressources\\img_overlay\\heads/81_1.png"
+    },
+    "Wyv": {
+        "classe": "Eliotrope",
+        "ini": 2,
+        "image_path": "ressources\\img_overlay\\heads/161_1.png"
+    },
+    "Chyv": {
+        "classe": "Ouginak",
+        "ini": 6,
+        "image_path": "ressources\\img_overlay\\heads/181_1.png"
+    },
+    "Syv": {
+        "classe": "Steamer",
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\heads/151_1.png"
+    },
+    "Myv": {
+        "classe": "Iop",
+        "ini": 1,
+        "image_path": "ressources\\img_overlay\\heads/81_1.png"
+    },
+    "Readox": {
+        "classe": "Feca",
+        "ini": 1,
+        "image_path": "ressources\\img_overlay\\heads/10_1.png"
+    },
+    "Lile": {
+        "classe": "Cra",
+        "ini": 1,
+        "image_path": "ressources\\img_overlay\\heads/91_2.png"
+    },
+    "Bish": {
+        "classe": "Cra",
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\heads/91_4.png"
+    },
+    "Labi": {
+        "classe": "Cra",
+        "ini": 6,
+        "image_path": "ressources\\img_overlay\\heads/91_7.png"
+    },
+    "Muul": {
+        "classe": "Feca",
+        "ini": 3,
+        "image_path": "ressources\\img_overlay\\heads/11_3.png"
+    },
+    "Selvy": {
+        "classe": "Sram",
+        "ini": 2,
+        "image_path": "ressources\\img_overlay\\heads/41_3.png"
+    },
+    "Ubu-Bomb": {
+        "classe": "Roublard",
+        "ini": 1,
+        "image_path": "ressources\\img_overlay\\icons/1004.png"
+    },
+    "Readi-ic": {
+        "classe": "Pandawa",
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\heads/120_1.png"
     }
 }

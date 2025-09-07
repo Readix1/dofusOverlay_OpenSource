@@ -2,8 +2,10 @@ import json
 import win32api
 try:
     from srcOverlay.Observer import Observer
+    from srcOverlay.invite_all import invite_all
 except:
     from Observer import Observer
+    from srcOverlay.invite_all import invite_all
 import win32gui
 import time
 import win32con
@@ -100,6 +102,8 @@ class DofusManager(Observer):
             return self.ask_stop
         elif shortcut == "macro_clic_next_win":
             return self.macro_clic_next_win
+        elif shortcut == "invite_all":
+            return self.macro_invite_all
         else: 
             logging.error(f"shortcut {shortcut} not found")
         
@@ -189,13 +193,15 @@ class DofusManager(Observer):
         temp_config["keyboard_bindings"]['next_win'] = self.config["keyboard_bindings"]['next_win']
         temp_config["keyboard_bindings"]['macro_clic_next_win'] = self.config["keyboard_bindings"]['macro_clic_next_win']
         temp_config["keyboard_bindings"]['next_turn'] = self.config["keyboard_bindings"]['next_turn']
-        
+        temp_config["keyboard_bindings"]['invite_all'] = self.config["keyboard_bindings"]['invite_all']
+
         with open("ressources/config.json", 'w') as file:
             json.dump(temp_config, file, indent=4)
             
     def get_shortcut(self, ):
         return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win'], \
-            self.config["keyboard_bindings"]['macro_clic_next_win'], self.config["keyboard_bindings"]['next_turn']
+            self.config["keyboard_bindings"]['macro_clic_next_win'], self.config["keyboard_bindings"]['next_turn'], \
+            self.config["keyboard_bindings"]['invite_all']
 
 
 
@@ -208,6 +214,14 @@ class DofusManager(Observer):
                 self.dofus_handler.click_current_page()
                 self._switch_next_win()
                 # time.sleep(0.2)
+    
+    def macro_invite_all(self):
+        with self.lock:
+            if(self.allow_event()):
+                names = self.dofus_handler.get_names()
+                self.dofus_handler.open_specific_page(names[0])
+                
+                invite_all(names[1:])
             
     def allow_event(self):
         tmp = win32gui.GetForegroundWindow()

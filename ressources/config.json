@@ -11,7 +11,8 @@
         "focus_dofus": "f13",
         "reorganizer": "f11",
         "actualise": "f4",
-        "macro_clic_next_win": "x1"
+        "macro_clic_next_win": "x1",
+        "invite_all": "f10"
     },
     "overlay": {
         "posx": 160,

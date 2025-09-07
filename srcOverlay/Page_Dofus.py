@@ -11,6 +11,11 @@ import threading
 
 from srcOverlay.information import Information 
 
+
+from pywinauto import Application, keyboard
+import pywinauto
+import time
+
 class Page_Dofus():
     def __init__(self, hwnd, handler=None,ini=0):
         self.hwnd = hwnd
@@ -72,12 +77,39 @@ class Page_Dofus():
             pythoncom.CoInitialize()
             shell = win32com.client.Dispatch("WScript.Shell")
             # shell.SendKeys(self.char)
-            shell.SendKeys("")
-            win32gui.ShowWindow(self.hwnd,3)
+            shell.SendKeys("%")
+            if win32gui.IsIconic(self.hwnd):  # Vérifie si la fenêtre est réduite
+                win32gui.ShowWindow(self.hwnd, win32con.SW_RESTORE)  # Restaure la fenêtre si elle est réduite
             win32gui.SetForegroundWindow(self.hwnd)
         except pywintypes.error as e :
             logging.error(f"Error when open {self.name} {e}")
             return
+        
+    def open_test(self):
+        try:
+            # Se connecter à la fenêtre via son handle (hwnd)
+            app = Application().connect(handle=self.hwnd, timeout=5)
+            window = app.window(handle=self.hwnd)
+
+            # Vérifier si la fenêtre est minimisée et la restaurer si nécessaire
+            if window.is_minimized():
+                window.restore()
+
+            # Envoyer une touche Alt pour éviter les restrictions de Windows
+            keyboard.send_keys('%')
+
+            # Mettre la fenêtre au premier plan
+            window.set_focus()
+            window.set_foreground()
+
+            # Pause pour stabiliser l'affichage
+            time.sleep(0.5)
+
+        except pywinauto.findwindows.ElementNotFoundError:
+            print(f"Erreur : Impossible de trouver la fenêtre avec hwnd={self.hwnd}")
+        except Exception as e:
+            print(f"Une erreur s'est produite : {e}")
+
         
     def click(self):
         """A ne pas utiliser avant l'aval d'ankama
