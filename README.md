@@ -34,9 +34,13 @@ Cette nouvelle version de l'overlay est une copie du organizer de dofusguide ave
 - Actualisation manuelle via f4 pour éviter une boucle infini (option: actualise, auto-actualisation)
 - Possibilité de mettre l'overlay à la verticale ou à l'horizontale (option: horizontal)
 - Save les informations comme l'ordre ou les images.
+- Invitation de tous les personnages dont une fenêtre est ouverte (cela pourrait enfreindre les CGU, je ne pense pas qu'il faille l'utiliser)
 
 
 ![](demo/demo.gif)
+
+#### Nouveau visuel, sur le modèle de dofus guide
+![](demo/visuel_overlay.png)
 
 ## Configurations:
 Dans le fichier ressources/config.json, il est possible de faire quelques modifications pour personnaliser l'overlay

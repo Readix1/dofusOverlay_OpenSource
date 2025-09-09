@@ -11,7 +11,7 @@
     },
     "Reedix": {
         "classe": "eliotrope",
-        "ini": 1,
+        "ini": 3,
         "image_path": "ressources\\img_overlay\\heads/31_1.png"
     },
     "Tc-arc": {
@@ -21,7 +21,7 @@
     },
     "Indimo": {
         "classe": "iop",
-        "ini": 5,
+        "ini": 8,
         "image_path": "ressources\\img_overlay\\heads/90_1.png",
         "shortcut": "f14"
     },
@@ -164,27 +164,27 @@
     },
     "Lile": {
         "classe": "Cra",
-        "ini": 1,
+        "ini": 2,
         "image_path": "ressources\\img_overlay\\heads/91_2.png"
     },
     "Bish": {
         "classe": "Cra",
-        "ini": 4,
+        "ini": 1,
         "image_path": "ressources\\img_overlay\\heads/91_4.png"
     },
     "Labi": {
         "classe": "Cra",
-        "ini": 6,
+        "ini": 4,
         "image_path": "ressources\\img_overlay\\heads/91_7.png"
     },
     "Muul": {
         "classe": "Feca",
-        "ini": 3,
+        "ini": 5,
         "image_path": "ressources\\img_overlay\\heads/11_3.png"
     },
     "Selvy": {
         "classe": "Sram",
-        "ini": 2,
+        "ini": 6,
         "image_path": "ressources\\img_overlay\\heads/41_3.png"
     },
     "Ubu-Bomb": {
