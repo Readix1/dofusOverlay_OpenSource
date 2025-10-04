@@ -11,7 +11,7 @@
     },
     "Reedix": {
         "classe": "eliotrope",
-        "ini": 3,
+        "ini": 5,
         "image_path": "ressources\\img_overlay\\heads/31_1.png"
     },
     "Tc-arc": {
@@ -21,7 +21,7 @@
     },
     "Indimo": {
         "classe": "iop",
-        "ini": 8,
+        "ini": 7,
         "image_path": "ressources\\img_overlay\\heads/90_1.png",
         "shortcut": "f14"
     },
@@ -54,7 +54,7 @@
     },
     "Readix": {
         "classe": "Iop",
-        "ini": 5,
+        "ini": 3,
         "image_path": "ressources\\img_overlay\\heads/101_1.png"
     },
     "Ganna": {
@@ -94,17 +94,17 @@
     },
     "Shyv": {
         "classe": "Forgelance",
-        "ini": 3,
+        "ini": 2,
         "image_path": "ressources\\img_overlay\\heads/201_1.png"
     },
     "Dyv": {
         "classe": "Pandawa",
-        "ini": 6,
+        "ini": 5,
         "image_path": "ressources\\img_overlay\\heads/121_1.png"
     },
     "Ryv": {
         "classe": "Eniripsa",
-        "ini": 7,
+        "ini": 6,
         "image_path": "ressources\\img_overlay\\heads/71_1.png"
     },
     "Lyv": {
@@ -129,7 +129,7 @@
     },
     "Sang-time": {
         "classe": "Sacrieur",
-        "ini": 7,
+        "ini": 8,
         "image_path": "ressources\\img_overlay\\heads/111_1.png"
     },
     "Nyv": {
@@ -164,22 +164,22 @@
     },
     "Lile": {
         "classe": "Cra",
-        "ini": 2,
+        "ini": 1,
         "image_path": "ressources\\img_overlay\\heads/91_2.png"
     },
     "Bish": {
         "classe": "Cra",
-        "ini": 1,
+        "ini": 4,
         "image_path": "ressources\\img_overlay\\heads/91_4.png"
     },
     "Labi": {
         "classe": "Cra",
-        "ini": 4,
+        "ini": 3,
         "image_path": "ressources\\img_overlay\\heads/91_7.png"
     },
     "Muul": {
         "classe": "Feca",
-        "ini": 5,
+        "ini": 2,
         "image_path": "ressources\\img_overlay\\heads/11_3.png"
     },
     "Selvy": {

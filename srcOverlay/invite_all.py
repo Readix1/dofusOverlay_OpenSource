@@ -9,9 +9,9 @@ def invite_all(name_list, ):
     press('enter')
 
     for name in name_list:
-        time.sleep(0.05)
+        time.sleep(0.07)
         write("/invite "+name)
-        time.sleep(0.05)
+        time.sleep(0.07)
         pa.press('enter')
 
 
