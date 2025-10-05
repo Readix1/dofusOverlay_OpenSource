@@ -12,10 +12,12 @@ class Config:
     def _get_config_path(cls):
         # Chemin relatif depuis ce fichier
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        rel_path = os.path.join(base_dir, 'ressources', 'config.json')
+        rel_path = os.path.join('ressources', 'config.json')
         if not os.path.exists(rel_path):
             # Essayer _internal/ressources/config.json
-            rel_path = os.path.join(base_dir, '_internal', 'ressources', 'config.json')
+            rel_path = os.path.join(base_dir, 'ressources', 'config.json')
+        
+        print(f"Using config path: {rel_path}")
         return rel_path
 
     @classmethod
