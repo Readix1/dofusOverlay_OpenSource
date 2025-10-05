@@ -437,19 +437,16 @@ def get_image_path(classe="iop"):
     
 
 if __name__ == "__main__":
-    import json
     from srcOverlay.Page_Dofus import Page_Dofus
-    
+    from srcOverlay.config import Config
+
     pages_dofus = [Page_Dofus(1, ini=1), Page_Dofus(0, ini=2), Page_Dofus(4, ini=4)]
     pages_dofus[0].name = "test1"
     pages_dofus[0].classe = "iop"
     pages_dofus[1].name = "Indimo"
     pages_dofus[1].classe = "cra"
     pages_dofus[2].name = "Readix"
-    
-    with open("ressources/config.json",encoding="utf-8") as file:
-        config = json.load(file)
-        
-    ihm = DofusGuideOverlay(config, pages_dofus, orientation=0)
-    # ihm = DofusGuideOverlay(config, pages_dofus, orientation="vertical")
+
+    ihm = DofusGuideOverlay(Config._config_data, pages_dofus, orientation=0)
+    # ihm = DofusGuideOverlay(Config._config_data, pages_dofus, orientation="vertical")
     ihm.mainloop()

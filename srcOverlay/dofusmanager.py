@@ -1,4 +1,4 @@
-import json
+from srcOverlay.config import Config
 import win32api
 try:
     from srcOverlay.Observer import Observer
@@ -28,9 +28,8 @@ MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
 
 class DofusManager(Observer):
-    def __init__(self, config, dofus_handler):
+    def __init__(self, dofus_handler):
         Observer.__init__(self,["stop","switch_page", "reorganise"])  
-        self.config=config
         self.mode = "combat"
         self.dofus_handler = dofus_handler
         self.running = True
@@ -109,21 +108,22 @@ class DofusManager(Observer):
         
     def build_shortcut_dict(self):
         dict_res = {}
-        for name, shortcut in self.config["keyboard_bindings"].items():
+        keyboard_bindings = Config.get_section("keyboard_bindings")
+        for name, shortcut in keyboard_bindings.items():
             dict_res[shortcut] = self.func_correspondance(name)
-            
         for dofus in self.dofus_handler.dofus:
             if dofus.shortcut != "":
-                dict_res[dofus.shortcut] = self.func_correspondance(None, dofus.name)    
-        
+                dict_res[dofus.shortcut] = self.func_correspondance(None, dofus.name)
         return dict_res
     
     def update_shortcut(self, shortcut_name, shortcut, specific_page=False):
         if specific_page==False:
-            if self.config["keyboard_bindings"][shortcut_name] in self.shortcut_dict:
-                del self.shortcut_dict[self.config["keyboard_bindings"][shortcut_name]]
+            keyboard_bindings = Config.get_section("keyboard_bindings")
+            if keyboard_bindings[shortcut_name] in self.shortcut_dict:
+                del self.shortcut_dict[keyboard_bindings[shortcut_name]]
             self.shortcut_dict[shortcut] = self.func_correspondance(shortcut_name)
-            self.config["keyboard_bindings"][shortcut_name] = shortcut
+            keyboard_bindings[shortcut_name] = shortcut
+            Config.set("keyboard_bindings", keyboard_bindings)
         else:
             if shortcut_name in self.specific_shortcut and self.specific_shortcut[shortcut_name] in self.shortcut_dict:
                 del self.shortcut_dict[self.specific_shortcut[shortcut_name]]
@@ -186,22 +186,21 @@ class DofusManager(Observer):
 
         
     def save_config(self):
-        with open("ressources/config.json", 'r') as file:
-            temp_config = json.load(file)
+        # Met à jour uniquement les raccourcis dans la config
+        keyboard_bindings = Config.get_section("keyboard_bindings")
+        for key in ['prev_win', 'next_win', 'macro_clic_next_win', 'next_turn', 'invite_all']:
+            keyboard_bindings[key] = Config.get_section("keyboard_bindings")[key]
+        Config.set("keyboard_bindings", keyboard_bindings)
             
-        temp_config["keyboard_bindings"]['prev_win'] = self.config["keyboard_bindings"]['prev_win']
-        temp_config["keyboard_bindings"]['next_win'] = self.config["keyboard_bindings"]['next_win']
-        temp_config["keyboard_bindings"]['macro_clic_next_win'] = self.config["keyboard_bindings"]['macro_clic_next_win']
-        temp_config["keyboard_bindings"]['next_turn'] = self.config["keyboard_bindings"]['next_turn']
-        temp_config["keyboard_bindings"]['invite_all'] = self.config["keyboard_bindings"]['invite_all']
-
-        with open("ressources/config.json", 'w') as file:
-            json.dump(temp_config, file, indent=4)
-            
-    def get_shortcut(self, ):
-        return self.config["keyboard_bindings"]['prev_win'], self.config["keyboard_bindings"]['next_win'], \
-            self.config["keyboard_bindings"]['macro_clic_next_win'], self.config["keyboard_bindings"]['next_turn'], \
-            self.config["keyboard_bindings"]['invite_all']
+    def get_shortcut(self):
+        keyboard_bindings = Config.get_section("keyboard_bindings")
+        return (
+            keyboard_bindings['prev_win'],
+            keyboard_bindings['next_win'],
+            keyboard_bindings['macro_clic_next_win'],
+            keyboard_bindings['next_turn'],
+            keyboard_bindings['invite_all']
+        )
 
 
 
@@ -271,10 +270,7 @@ def keyDown(hid, key):
     win32api.SendMessage(hid, win32con.WM_KEYUP, key, 0) 
         
 if __name__ == "__main__":
-    with open("config.json") as file:
-        config = json.load(file) 
-    
-    DM = DofusManager(config)
+    DM = DofusManager(None)
     # DM.start()
     # time.sleep(2)
     # DM.reset_page()
