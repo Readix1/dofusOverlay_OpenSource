@@ -1,6 +1,5 @@
 import win32process
 import win32gui
-import win32api
 import win32con
 import logging
 import pythoncom
@@ -8,6 +7,7 @@ import pywintypes
 import win32com.client
 import time
 import threading
+import ctypes
 
 from srcOverlay.information import Information 
 
@@ -15,6 +15,34 @@ from srcOverlay.information import Information
 from pywinauto import Application, keyboard
 import pywinauto
 import time
+
+MOUSEEVENTF_LEFTDOWN = 0x0002
+MOUSEEVENTF_LEFTUP = 0x0004
+ULONG_PTR = ctypes.c_ulonglong if ctypes.sizeof(ctypes.c_void_p) == 8 else ctypes.c_ulong
+
+
+class MOUSEINPUT(ctypes.Structure):
+    _fields_ = [
+        ("dx", ctypes.c_long),
+        ("dy", ctypes.c_long),
+        ("mouseData", ctypes.c_ulong),
+        ("dwFlags", ctypes.c_ulong),
+        ("time", ctypes.c_ulong),
+        ("dwExtraInfo", ULONG_PTR),
+    ]
+
+
+class INPUT_UNION(ctypes.Union):
+    _fields_ = [("mi", MOUSEINPUT)]
+
+
+class INPUT(ctypes.Structure):
+    _anonymous_ = ("data",)
+    _fields_ = [
+        ("type", ctypes.c_ulong),
+        ("data", INPUT_UNION),
+    ]
+
 
 class Page_Dofus():
     def __init__(self, hwnd, handler=None,ini=0):
@@ -112,25 +140,31 @@ class Page_Dofus():
 
         
     def click(self):
-        """A ne pas utiliser avant l'aval d'ankama
-
-        Args:
-            x (_type_): _description_
-            y (_type_): _description_
-            pause (float, optional): _description_. Defaults to 0.3.
-            manyTry (bool, optional): _description_. Defaults to False.
-        """
+        """Simule un clic gauche a la position actuelle du curseur."""
         with self.lock:
             x,y = win32gui.GetCursorPos()
-            curr_h = win32gui.GetForegroundWindow()
-            realx,realy = win32gui.ScreenToClient(curr_h,(x,y))
-            lParam = win32api.MAKELONG(realx,realy)
-            win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
-            time.sleep(0.01)
-            win32gui.SendMessage(self.hwnd, win32con.WM_LBUTTONUP, None, lParam)
-            
-            # time.sleep(0)
-            
+
+            if win32gui.GetForegroundWindow() != self.hwnd:
+                logging.warning(
+                    "Impossible de cliquer sur %s: la fenetre n'est pas au premier plan",
+                    self.hwnd,
+                )
+                return
+
+            user32 = ctypes.windll.user32
+            button_down = INPUT(type=0)
+            button_down.mi.dwFlags = MOUSEEVENTF_LEFTDOWN
+            if user32.SendInput(1, ctypes.byref(button_down), ctypes.sizeof(INPUT)) != 1:
+                logging.error("SendInput a echoue pour la fenetre %s", self.hwnd)
+                return
+
+            time.sleep(0.03)
+            button_up = INPUT(type=0)
+            button_up.mi.dwFlags = MOUSEEVENTF_LEFTUP
+            if user32.SendInput(1, ctypes.byref(button_up), ctypes.sizeof(INPUT)) != 1:
+                logging.error("SendInput a echoue pour relacher le bouton sur %s", self.hwnd)
+                return
+
             logging.info(f"click de {self.name}, coord: {x}, {y}")
             
         
