@@ -134,8 +134,9 @@
     },
     "Nyv": {
         "classe": "Iop",
-        "ini": 2,
-        "image_path": "ressources\\img_overlay\\heads/81_1.png"
+        "ini": 8,
+        "image_path": "ressources\\img_overlay\\heads/140_1.png",
+        "shortcut": "f14"
     },
     "Wyv": {
         "classe": "Eliotrope",
@@ -196,5 +197,40 @@
         "classe": "Pandawa",
         "ini": 4,
         "image_path": "ressources\\img_overlay\\heads/120_1.png"
+    },
+    "Hyv": {
+        "classe": "Zobal",
+        "ini": 3,
+        "image_path": "ressources\\img_overlay\\heads/61_1.png"
+    },
+    "Jyv": {
+        "classe": "Pandawa",
+        "ini": 5,
+        "image_path": "ressources\\img_overlay\\heads/31_1.png"
+    },
+    "Nhov": {
+        "classe": "Iop",
+        "ini": 1,
+        "image_path": "ressources\\img_overlay\\head_char/mini_8_0.png"
+    },
+    "Lov": {
+        "classe": "Sadida",
+        "ini": 2,
+        "image_path": "ressources\\img_overlay\\head_char/mini_10_1.png"
+    },
+    "Cyv": {
+        "classe": "Sadida",
+        "ini": 6,
+        "image_path": "ressources\\img_overlay\\heads/100_1.png"
+    },
+    "Mov": {
+        "classe": "Eliotrope",
+        "ini": 4,
+        "image_path": "ressources\\img_overlay\\head_char/mini_16_1.png"
+    },
+    "Rov": {
+        "classe": "Feca",
+        "ini": 7,
+        "image_path": "ressources\\img_overlay\\head_char/mini_1_1.png"
     }
 }
