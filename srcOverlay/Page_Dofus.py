@@ -158,7 +158,7 @@ class Page_Dofus():
                 logging.error("SendInput a echoue pour la fenetre %s", self.hwnd)
                 return
 
-            time.sleep(0.03)
+            time.sleep(0.01)
             button_up = INPUT(type=0)
             button_up.mi.dwFlags = MOUSEEVENTF_LEFTUP
             if user32.SendInput(1, ctypes.byref(button_up), ctypes.sizeof(INPUT)) != 1:
